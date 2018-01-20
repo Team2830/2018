@@ -7,10 +7,17 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Encoder.IndexingType;
+import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -27,6 +34,12 @@ public class RobotMap {
 	public static SpeedControllerGroup speedControllerGroupRight;
 	public static DifferentialDrive robotDrive;
 	
+	public static Encoder leftEncoder;
+	public static Encoder rightEncoder;
+	
+	public static AHRS ahrs;
+
+	
 	public static void init(){
 		speedControllerFrontLeft = new Spark(0);
 		speedControllerBackLeft = new Spark(1);
@@ -34,7 +47,21 @@ public class RobotMap {
 		speedControllerFrontRight = new Spark(3);
 		speedControllerGroupLeft = new SpeedControllerGroup(speedControllerFrontLeft, speedControllerBackLeft);
 		speedControllerGroupRight = new SpeedControllerGroup(speedControllerFrontRight, speedControllerBackRight);
+		
 		robotDrive = new DifferentialDrive(speedControllerGroupLeft, speedControllerGroupRight);
+		
+		leftEncoder = new Encoder(0, 1);
+		leftEncoder.setDistancePerPulse(-0.052360);
+		leftEncoder.setPIDSourceType(PIDSourceType.kRate);
+		leftEncoder.setIndexSource(4, IndexingType.kResetOnRisingEdge);
+		
+		rightEncoder = new Encoder(2, 3);
+		rightEncoder.setDistancePerPulse(-0.052360);
+		rightEncoder.setPIDSourceType(PIDSourceType.kRate);
+		rightEncoder.setIndexSource(5, IndexingType.kResetOnRisingEdge);
+		
+		
+		ahrs = new AHRS(SerialPort.Port.kUSB1);
 		
 		robotDrive.setExpiration(0.1);
 		robotDrive.setSafetyEnabled(true);

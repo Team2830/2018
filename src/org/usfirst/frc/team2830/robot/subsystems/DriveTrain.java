@@ -14,6 +14,7 @@ import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -21,12 +22,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DriveTrain extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
+	
+	
 	public double controllerCorrection = 0.35;
 	public double joystickDeadband = 0.02;
 	
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
+		
+		RobotMap.ahrs.resetDisplacement();
+		RobotMap.leftEncoder.reset();
+		RobotMap.rightEncoder.reset();
 	}
 	
 	public void driveArcade(Joystick driverStick){
@@ -41,5 +48,10 @@ public class DriveTrain extends Subsystem {
 		}else{
 			return deadband;
 		}
+	}
+	public void writeToSmartDashboard(){
+		SmartDashboard.putNumber("Left Encoder", RobotMap.leftEncoder.getDistance());
+		SmartDashboard.putNumber("Right Encoder", RobotMap.rightEncoder.getDistance());
+		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
 	}
 }

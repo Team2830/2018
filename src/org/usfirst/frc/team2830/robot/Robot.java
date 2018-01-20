@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -14,6 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
+
+import com.kauailabs.navx.frc.AHRS;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,9 +29,10 @@ public class Robot extends TimedRobot {
 	public static final DriveTrain driveTrain
 			= new DriveTrain();
 	public static OI oi;
-
+	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
+	
 
 	/**
 	 * This function is run when the robot is first started up and should be
