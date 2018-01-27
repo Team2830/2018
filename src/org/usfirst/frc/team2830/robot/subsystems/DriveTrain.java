@@ -31,9 +31,14 @@ public class DriveTrain extends Subsystem {
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
 		
-		RobotMap.ahrs.resetDisplacement();
 		RobotMap.leftEncoder.reset();
 		RobotMap.rightEncoder.reset();
+		RobotMap.ahrs.zeroYaw();
+		
+	}
+	
+	public void driveForward(double velocity, double rotation){
+		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
 	}
 	
 	public void driveArcade(Joystick driverStick){
@@ -53,5 +58,10 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Left Encoder", RobotMap.leftEncoder.getDistance());
 		SmartDashboard.putNumber("Right Encoder", RobotMap.rightEncoder.getDistance());
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
+	}
+	
+	public double getEncoderAverage(){
+		return (RobotMap.leftEncoder.getDistance()+
+				RobotMap.rightEncoder.getDistance())/2;
 	}
 }

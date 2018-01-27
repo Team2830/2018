@@ -51,7 +51,7 @@ public class RobotMap {
 		robotDrive = new DifferentialDrive(speedControllerGroupLeft, speedControllerGroupRight);
 		
 		leftEncoder = new Encoder(0, 1);
-		leftEncoder.setDistancePerPulse(-0.052360);
+		leftEncoder.setDistancePerPulse(0.052360);
 		leftEncoder.setPIDSourceType(PIDSourceType.kRate);
 		leftEncoder.setIndexSource(4, IndexingType.kResetOnRisingEdge);
 		

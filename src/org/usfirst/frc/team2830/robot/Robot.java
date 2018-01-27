@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 
@@ -32,6 +34,7 @@ public class Robot extends TimedRobot {
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
+	
 	
 
 	/**
@@ -75,6 +78,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		m_autonomousCommand = m_chooser.getSelected();
 
 		/*
@@ -96,6 +100,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		Robot.driveTrain.writeToSmartDashboard();
 	}
 
 	@Override
@@ -115,6 +120,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		Robot.driveTrain.writeToSmartDashboard();
+		
 	}
 
 	/**
