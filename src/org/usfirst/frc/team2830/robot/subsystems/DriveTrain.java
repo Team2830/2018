@@ -31,10 +31,14 @@ public class DriveTrain extends Subsystem {
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
 		
+		resetCounters();
+		
+	}
+
+	public void resetCounters() {
 		RobotMap.leftEncoder.reset();
 		RobotMap.rightEncoder.reset();
 		RobotMap.ahrs.zeroYaw();
-		
 	}
 	
 	public void driveForward(double velocity, double rotation){
@@ -63,5 +67,45 @@ public class DriveTrain extends Subsystem {
 	public double getEncoderAverage(){
 		return (RobotMap.leftEncoder.getDistance()+
 				RobotMap.rightEncoder.getDistance())/2;
+	}
+	
+	public void driveCorrection(double velocity){
+
+       	if(RobotMap.ahrs.getAngle()<-1.00){
+    		driveForward(velocity,.3);
+    		SmartDashboard.putString("Turn Direction", "left");
+    	}
+    	else if(RobotMap.ahrs.getAngle()>1.00){
+    		driveForward(velocity,-.3);
+    		SmartDashboard.putString("Turn Direction", "right");
+    	}
+    	else{
+    		driveForward(velocity,0);
+    		SmartDashboard.putString("Turn Direction", "straight");
+    	}
+	}
+	public double getProfileSpeed(double endDistance, double maxSpeed){
+       	double distanceDriven = getDrivenDistance();
+       	double minSpeed = .6;
+       	double rampDistance = Math.min(18,endDistance/2);
+       	double brakeStartDistance = endDistance-Math.min(18,endDistance/2);
+       	if (distanceDriven>brakeStartDistance)
+       		 return maxSpeed+((minSpeed-maxSpeed)/(endDistance-brakeStartDistance))*(distanceDriven-brakeStartDistance);
+       	else if (distanceDriven<rampDistance)
+       		return minSpeed+((maxSpeed-minSpeed)/rampDistance)*distanceDriven;
+       	else
+      		return maxSpeed;
+	}
+	
+	public void driveDistanceStraight(double distance, double speed){
+		driveCorrection(getProfileSpeed(distance, speed));
+		
+	}
+	public void stopDriving(){
+		RobotMap.robotDrive.arcadeDrive(0, 0);
+	}
+	
+	public double getDrivenDistance(){
+		return RobotMap.rightEncoder.getDistance();
 	}
 }

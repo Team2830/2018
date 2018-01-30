@@ -9,6 +9,7 @@ package org.usfirst.frc.team2830.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Encoder.IndexingType;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -39,7 +40,12 @@ public class RobotMap {
 	
 	public static AHRS ahrs;
 
-	
+	/**
+	 * Initializes the speed controllers and their groups,
+	 * the encoders,
+	 * the gyroscope,
+	 * and the robot drive
+	 */
 	public static void init(){
 		speedControllerFrontLeft = new Spark(0);
 		speedControllerBackLeft = new Spark(1);
@@ -50,16 +56,11 @@ public class RobotMap {
 		
 		robotDrive = new DifferentialDrive(speedControllerGroupLeft, speedControllerGroupRight);
 		
-		leftEncoder = new Encoder(0, 1);
+		leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 		leftEncoder.setDistancePerPulse(0.052360);
-		leftEncoder.setPIDSourceType(PIDSourceType.kRate);
-		leftEncoder.setIndexSource(4, IndexingType.kResetOnRisingEdge);
 		
-		rightEncoder = new Encoder(2, 3);
-		rightEncoder.setDistancePerPulse(-0.052360);
-		rightEncoder.setPIDSourceType(PIDSourceType.kRate);
-		rightEncoder.setIndexSource(5, IndexingType.kResetOnRisingEdge);
-		
+		rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+		rightEncoder.setDistancePerPulse(-0.052360);		
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
 		
