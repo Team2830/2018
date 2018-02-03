@@ -7,8 +7,6 @@
 
 package org.usfirst.frc.team2830.robot.subsystems;
 
-import java.awt.Robot;
-
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
@@ -34,23 +32,44 @@ public class DriveTrain extends Subsystem {
 		resetCounters();
 		
 	}
-
+	
+	/**
+	 * Resets the encoders and the gyroscope.
+	 */
 	public void resetCounters() {
 		RobotMap.leftEncoder.reset();
 		RobotMap.rightEncoder.reset();
 		RobotMap.ahrs.zeroYaw();
 	}
 	
+	/**
+	 * Calls arcadeDrive with given parameters
+	 * @param velocity Takes the speed.
+	 * @param rotation Takes the angle.
+	 */
 	public void driveForward(double velocity, double rotation){
 		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
 	}
 	
+	/**
+	 * Takes inputs from driverStick and calls arcadeDrive to move the robot.
+	 * @param driverStick Takes input values and activates the drivetrain motors accordingly.
+	 * The throttle tells arcadeDrive how fast the robot should move.
+	 * Steering tells arcadeDrive how quickly the robot should turn.
+	 */
 	public void driveArcade(Joystick driverStick){
 		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 		RobotMap.robotDrive.arcadeDrive(throttle, steering, true);
 	}
 	
+	/**
+	 * Keeps the robot from driving when the controller values are minuscule.
+	 * @param input Controller input value.
+	 * @param deadband Lower threshold for controller input value.
+	 * @return Returns input if the controller input is greater than the deadband.
+	 * Otherwise returns the deadband.
+	 */
 	public double deadbanded(double input, double deadband){
 		if(Math.abs(input)>Math.abs(deadband)){
 			return input;
@@ -58,17 +77,30 @@ public class DriveTrain extends Subsystem {
 			return deadband;
 		}
 	}
+	
+	/**
+	 * Adds values to the shuffleboard.
+	 */
 	public void writeToSmartDashboard(){
 		SmartDashboard.putNumber("Left Encoder", RobotMap.leftEncoder.getDistance());
 		SmartDashboard.putNumber("Right Encoder", RobotMap.rightEncoder.getDistance());
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
 	}
 	
+	/**
+	 * Retrieves the average encoder distance from the left and right drivetrain encoders.
+	 * @return returns the average value.
+	 */
 	public double getEncoderAverage(){
 		return (RobotMap.leftEncoder.getDistance()+
 				RobotMap.rightEncoder.getDistance())/2;
 	}
-	
+	/**
+	 * Uses the gyroscope to ensure that the robot is driving straight.
+	 * Calls driveForward to correct the drive when the robot is not driving
+	 * within 1 degree of straight.
+	 * @param velocity Takes the velocity of the robot to use when calling driveForward for the correction.
+	 */
 	public void driveCorrection(double velocity){
 
        	if(RobotMap.ahrs.getAngle()<-1.00){

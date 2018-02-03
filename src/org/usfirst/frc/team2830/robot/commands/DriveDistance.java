@@ -31,7 +31,6 @@ public class DriveDistance extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        	
        	Robot.driveTrain.driveDistanceStraight(m_distance, m_speed);
     
     }
