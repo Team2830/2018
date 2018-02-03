@@ -15,14 +15,20 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class OI {
 	Joystick driverStick;
+	Joystick operatorStick;
 
 	// Start the command when the button is released and let it run the command
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
 	public OI(){
 		driverStick = new Joystick(0);
+		operatorStick = new Joystick(1);
 	}
 	public Joystick getDriverJoystick(){
 		return driverStick;
+	}
+	
+	public Joystick getOperatorJoystick(){
+		return operatorStick;
 	}
 }

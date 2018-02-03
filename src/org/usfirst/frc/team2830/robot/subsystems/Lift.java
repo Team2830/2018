@@ -1,7 +1,9 @@
 package org.usfirst.frc.team2830.robot.subsystems;
 
 import org.usfirst.frc.team2830.robot.RobotMap;
+import org.usfirst.frc.team2830.robot.commands.OperateLift;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -15,6 +17,7 @@ public class Lift extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
+    	setDefaultCommand(new OperateLift());
     	
     }
     /**
@@ -24,6 +27,14 @@ public class Lift extends Subsystem {
     public void set(double speed){
     	RobotMap.liftBack.set(speed);
     	RobotMap.liftFront.set(speed);
+    }
+    /**
+     * Allows the operator to manually move the lift.
+     * @param operatorStick The operator joystick.
+     */
+    public void operateLift(Joystick operatorStick){
+    	double speed = operatorStick.getRawAxis(1);
+    	set(speed);
     }
 }
 

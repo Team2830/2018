@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team2830.robot.subsystems.Intake;
+import org.usfirst.frc.team2830.robot.subsystems.Lift;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -31,6 +33,8 @@ public class Robot extends TimedRobot {
 	public static final DriveTrain driveTrain
 			= new DriveTrain();
 	public static OI oi;
+	public static Lift lift;
+	public static Intake intake;
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -45,6 +49,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		RobotMap.init();
 		oi = new OI();
+		lift = new Lift();
 		m_chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
