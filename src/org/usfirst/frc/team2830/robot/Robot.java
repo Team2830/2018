@@ -50,6 +50,8 @@ public class Robot extends TimedRobot {
 		RobotMap.init();
 		oi = new OI();
 		lift = new Lift();
+		intake = new Intake();
+		
 		m_chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
