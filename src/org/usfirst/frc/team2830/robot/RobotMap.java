@@ -57,10 +57,10 @@ public class RobotMap {
 	 * 
 	 */
 	public static void init(){
-		victorLeft = new WPI_VictorSPX(12);
-		talonLeft = new WPI_TalonSRX(13);
-		victorRight = new WPI_VictorSPX(0);
-		talonRight = new WPI_TalonSRX(3);
+		victorLeft = new WPI_VictorSPX(14);
+		talonLeft = new WPI_TalonSRX(15);
+		victorRight = new WPI_VictorSPX(1);
+		talonRight = new WPI_TalonSRX(0);
 		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
