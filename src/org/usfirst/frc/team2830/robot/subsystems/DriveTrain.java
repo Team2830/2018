@@ -140,4 +140,8 @@ public class DriveTrain extends Subsystem {
 	public double getDrivenDistance(){
 		return RobotMap.rightEncoder.getDistance();
 	}
+	
+	public int getPulsesFromInches(double inches){
+		return (int)(240/Math.PI*inches);
+	}
 }

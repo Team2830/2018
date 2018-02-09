@@ -62,6 +62,17 @@ public class RobotMap {
 		victorRight = new WPI_VictorSPX(1);
 		talonRight = new WPI_TalonSRX(0);
 		
+		talonLeft.configPeakCurrentLimit(0, 0);
+		talonLeft.configContinuousCurrentLimit(20, 0);
+		talonLeft.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
+		talonLeft.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
+		
+		talonRight.configPeakCurrentLimit(0, 0);
+		talonRight.configContinuousCurrentLimit(20, 0);
+		talonRight.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
+		talonRight.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
+
+		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
 		//speedControllerGroupLeft = new SpeedControllerGroup(speedControllerFrontLeft, speedControllerBackLeft);

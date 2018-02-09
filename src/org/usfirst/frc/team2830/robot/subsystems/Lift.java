@@ -13,6 +13,7 @@ public class Lift extends Subsystem {
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
+	public double joystickDeadband = .02;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -33,8 +34,17 @@ public class Lift extends Subsystem {
      * @param operatorStick The operator joystick.
      */
     public void operateLift(Joystick operatorStick){
-    	double speed = operatorStick.getRawAxis(1);
+    	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	set(speed);
+    }
+    
+    public double deadbanded(double input, double deadband){
+    	if (Math.abs(input) > Math.abs(deadband)){
+    		return input;
+    	}
+    	else {
+    		return 0;
+    	}
     }
 }
 
