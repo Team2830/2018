@@ -37,8 +37,8 @@ public class DriveTrain extends Subsystem {
 	 * Resets the encoders and the gyroscope.
 	 */
 	public void resetCounters() {
-		RobotMap.leftEncoder.reset();
-		RobotMap.rightEncoder.reset();
+		//RobotMap.leftEncoder.reset();
+		//RobotMap.rightEncoder.reset();
 		RobotMap.ahrs.zeroYaw();
 	}
 	
@@ -61,6 +61,9 @@ public class DriveTrain extends Subsystem {
 		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 		RobotMap.robotDrive.arcadeDrive(throttle, steering, true);
+		//RobotMap.robotDrive.tankDrive(throttle, steering, true);
+		//RobotMap.talonLeft.set(mode, value);et();
+		
 	}
 	
 	/**
@@ -82,8 +85,8 @@ public class DriveTrain extends Subsystem {
 	 * Adds values to the shuffleboard.
 	 */
 	public void writeToSmartDashboard(){
-		SmartDashboard.putNumber("Left Encoder", RobotMap.leftEncoder.getDistance());
-		SmartDashboard.putNumber("Right Encoder", RobotMap.rightEncoder.getDistance());
+		SmartDashboard.putNumber("Left Encoder", RobotMap.talonLeft.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder", RobotMap.talonRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
 	}
 	

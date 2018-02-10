@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -15,6 +16,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -48,6 +50,10 @@ public class RobotMap {
 	public static SpeedController liftFront;
 	public static SpeedController liftBack;
 	
+	public static PowerDistributionPanel pdp;
+	
+	public static final int intakeChannel = 3;
+	
 
 	/**
 	 * Initializes the speed controllers,
@@ -57,21 +63,30 @@ public class RobotMap {
 	 * 
 	 */
 	public static void init(){
+		pdp = new PowerDistributionPanel();
+		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
 		victorRight = new WPI_VictorSPX(1);
 		talonRight = new WPI_TalonSRX(0);
 		
-		talonLeft.configPeakCurrentLimit(0, 0);
-		talonLeft.configContinuousCurrentLimit(20, 0);
-		talonLeft.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
-		talonLeft.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
+		//talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		
-		talonRight.configPeakCurrentLimit(0, 0);
+		talonLeft.configContinuousCurrentLimit(20, 10);
+		talonLeft.configPeakCurrentLimit(30, 10);
+		talonLeft.enableCurrentLimit(true);
+		talonLeft.configPeakCurrentDuration(100, 10);
+		//talonLeft.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
+		//talonLeft.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
+		
+		//talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		talonRight.enableCurrentLimit(true);
 		talonRight.configContinuousCurrentLimit(20, 0);
-		talonRight.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
-		talonRight.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
-
+		talonRight.configPeakCurrentLimit(30, 10);
+		talonRight.configPeakCurrentDuration(100, 10);
+		//talonRight.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
+		//talonRight.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
+		
 		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
@@ -79,12 +94,13 @@ public class RobotMap {
 		//speedControllerGroupRight = new SpeedControllerGroup(speedControllerFrontRight, speedControllerBackRight);
 		
 		robotDrive = new DifferentialDrive(talonLeft, talonRight);
+		//robotDrive = new TankDrive()
 		
-		leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-		leftEncoder.setDistancePerPulse(0.052360);
+		//leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+		//leftEncoder.setDistancePerPulse(0.052360);
 		
-		rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-		rightEncoder.setDistancePerPulse(-0.052360);		
+		//rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+		//rightEncoder.setDistancePerPulse(-0.052360);		
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
 		
@@ -93,7 +109,11 @@ public class RobotMap {
 		robotDrive.setMaxOutput(1.0);
 		
 		intakeLeft = new Spark(0);
+		intakeLeft.setInverted(true);
 		intakeRight = new Spark(1);
+		intakeRight.setInverted(false);
+		
+		
 		liftFront = new Spark(2);
 		liftBack = new Spark(3);
 	}

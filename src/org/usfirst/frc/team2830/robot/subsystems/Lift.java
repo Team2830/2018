@@ -35,7 +35,7 @@ public class Lift extends Subsystem {
      */
     public void operateLift(Joystick operatorStick){
     	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(speed);
+    	set(speed*speed);
     }
     
     public double deadbanded(double input, double deadband){
