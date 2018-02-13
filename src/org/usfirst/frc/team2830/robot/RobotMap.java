@@ -36,12 +36,8 @@ public class RobotMap {
 	public static WPI_TalonSRX talonLeft;
 	public static WPI_VictorSPX victorRight;
 	public static WPI_TalonSRX talonRight;
-	//public static SpeedControllerGroup speedControllerGroupLeft;
-	//public static SpeedControllerGroup speedControllerGroupRight;
 	public static DifferentialDrive robotDrive;
 	
-	public static Encoder leftEncoder;
-	public static Encoder rightEncoder;
 	
 	public static AHRS ahrs;
 	
@@ -70,37 +66,16 @@ public class RobotMap {
 		victorRight = new WPI_VictorSPX(1);
 		talonRight = new WPI_TalonSRX(0);
 		
-		//talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		
-		talonLeft.configContinuousCurrentLimit(20, 10);
-		talonLeft.configPeakCurrentLimit(30, 10);
-		talonLeft.enableCurrentLimit(true);
-		talonLeft.configPeakCurrentDuration(100, 10);
-		//talonLeft.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
-		//talonLeft.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
-		
-		//talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		talonRight.enableCurrentLimit(true);
-		talonRight.configContinuousCurrentLimit(20, 0);
-		talonRight.configPeakCurrentLimit(30, 10);
-		talonRight.configPeakCurrentDuration(100, 10);
-		//talonRight.configMotionCruiseVelocity(Robot.driveTrain.getPulsesFromInches(12), 10);
-		//talonRight.configMotionAcceleration(Robot.driveTrain.getPulsesFromInches(3), 10);
-		
+		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		//talonLeft.setSensorPhase(true);
+		talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
-		//speedControllerGroupLeft = new SpeedControllerGroup(speedControllerFrontLeft, speedControllerBackLeft);
-		//speedControllerGroupRight = new SpeedControllerGroup(speedControllerFrontRight, speedControllerBackRight);
 		
-		robotDrive = new DifferentialDrive(talonLeft, talonRight);
-		//robotDrive = new TankDrive()
+		Robot.driveTrain.driveTrainInit();
 		
-		//leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-		//leftEncoder.setDistancePerPulse(0.052360);
-		
-		//rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-		//rightEncoder.setDistancePerPulse(-0.052360);		
+		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
 		
