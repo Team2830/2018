@@ -40,6 +40,8 @@ public class RobotMap {
 	
 	
 	public static AHRS ahrs;
+	public static Encoder liftEncoder;
+	public static Encoder intakeEncoder;
 	
 	public static SpeedController intakeLeft;
 	public static SpeedController intakeRight;
@@ -78,6 +80,8 @@ public class RobotMap {
 		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
+		liftEncoder = new Encoder(0,1,true);
+		intakeEncoder = new Encoder(0,1,true);
 		
 		robotDrive.setExpiration(0.1);
 		robotDrive.setSafetyEnabled(true);
