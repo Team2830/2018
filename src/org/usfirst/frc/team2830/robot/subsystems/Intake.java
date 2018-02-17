@@ -40,9 +40,9 @@ public class Intake extends Subsystem {
      * @param operatorStick The joystick on which the checks will be enacted.
      */
     public void operateIntake(Joystick operatorStick){
-    	if(operatorStick.getRawButtonPressed(1)){
+    	if(operatorStick.getRawButton(1)){
     		intakeIn();
-    	}else if(operatorStick.getRawButtonPressed(2)){
+    	}else if(operatorStick.getRawButton(2)){
     		intakeOut();
     	}else{
     		stopIntake();
