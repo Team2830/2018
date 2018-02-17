@@ -32,8 +32,8 @@ public class Lift extends Subsystem {
      * @param speed The speed from -1 to 1.
      */
     public void set(double speed){
-    	RobotMap.liftBack.set(speed);
-    	RobotMap.liftFront.set(speed);
+    	RobotMap.liftRight.set(speed);
+    	RobotMap.liftLeft.set(speed);
     }
     
 	public void writeToSmartDashboard(Joystick operatorStick) {

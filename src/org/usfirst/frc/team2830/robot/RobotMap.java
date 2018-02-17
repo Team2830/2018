@@ -45,8 +45,8 @@ public class RobotMap {
 	
 	public static SpeedController intakeLeft;
 	public static SpeedController intakeRight;
-	public static SpeedController liftFront;
-	public static SpeedController liftBack;
+	public static SpeedController liftLeft;
+	public static SpeedController liftRight;
 	
 	public static PowerDistributionPanel pdp;
 	
@@ -93,8 +93,8 @@ public class RobotMap {
 		intakeRight.setInverted(false);
 		
 		
-		liftFront = new Spark(2);
-		liftBack = new Spark(3);
+		liftLeft = new Spark(2);
+		liftRight = new Spark(3);
 	}
 	
 }
