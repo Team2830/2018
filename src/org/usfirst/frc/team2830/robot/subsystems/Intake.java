@@ -4,7 +4,6 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.OperateIntake;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -22,12 +21,12 @@ public class Intake extends Subsystem {
     }
     
     public void intakeIn(){
-    	RobotMap.intakeLeft.set(.7);
-    	RobotMap.intakeRight.set(.7);
+    	RobotMap.intakeLeft.set(.8);
+    	RobotMap.intakeRight.set(.8);
     }
     public void intakeOut(){
-    	RobotMap.intakeLeft.set(-.7);
-    	RobotMap.intakeRight.set(-.7);
+    	RobotMap.intakeLeft.set(-.8);
+    	RobotMap.intakeRight.set(-.8);
     	
     }
     public void intakeInSlow(){

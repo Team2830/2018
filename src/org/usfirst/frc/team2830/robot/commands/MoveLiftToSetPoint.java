@@ -1,32 +1,29 @@
 package org.usfirst.frc.team2830.robot.commands;
 
-import org.usfirst.frc.team2830.robot.OI;
 import org.usfirst.frc.team2830.robot.Robot;
-import org.usfirst.frc.team2830.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class ArcadeDrive extends Command {
-
-    public ArcadeDrive() {
-    	requires(Robot.driveTrain);
+public class MoveLiftToSetPoint extends Command {
+	private double liftGoalHeight;
+	
+    public MoveLiftToSetPoint(double goalHeight) {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis)
+        // eg. requires(chassis);
+    	goalHeight = liftGoalHeight;
+    	requires(Robot.lift);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.driveTrain.resetCounters();
-		
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveTrain.driveArcade(Robot.oi.getDriverJoystick());
-    	Robot.driveTrain.writeToSmartDashboard();
+    	Robot.lift.liftCorrection(liftGoalHeight);
     }
 
     // Make this return true when this Command no longer needs to run execute()

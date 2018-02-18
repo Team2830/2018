@@ -41,7 +41,6 @@ public class RobotMap {
 	
 	public static AHRS ahrs;
 	public static Encoder liftEncoder;
-	public static Encoder intakeEncoder;
 	
 	public static SpeedController intakeLeft;
 	public static SpeedController intakeRight;
@@ -61,7 +60,7 @@ public class RobotMap {
 	 * 
 	 */
 	public static void init(){
-		pdp = new PowerDistributionPanel();
+		pdp = new PowerDistributionPanel(20);
 		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
@@ -69,19 +68,17 @@ public class RobotMap {
 		talonRight = new WPI_TalonSRX(0);
 		
 		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		//talonLeft.setSensorPhase(true);
 		talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
 		
-		Robot.driveTrain.driveTrainInit();
+		//Robot.driveTrain.driveTrainInit();
 		
 		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
 		liftEncoder = new Encoder(0,1,true);
-		intakeEncoder = new Encoder(0,1,true);
 		
 		robotDrive.setExpiration(0.1);
 		robotDrive.setSafetyEnabled(true);

@@ -17,6 +17,7 @@ public class Lift extends Subsystem {
     // here. Call these from Commands.
 	public double joystickDeadband = .02;
 	private Encoder liftEncoder;
+	public int liftHeightIndex = 0;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -24,7 +25,7 @@ public class Lift extends Subsystem {
     	setDefaultCommand(new OperateLift());
     	
     	liftEncoder = RobotMap.liftEncoder;
-    	getLiftEncoder().reset();
+    	liftEncoder.reset();
     	
     }
     /**
@@ -37,7 +38,7 @@ public class Lift extends Subsystem {
     }
     
 	public void writeToSmartDashboard(Joystick operatorStick) {
-		SmartDashboard.putNumber("Lift Encoder",getLiftEncoder().getDistance());
+		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
 	}
     /**
      * Allows the operator to manually move the lift.
@@ -56,8 +57,27 @@ public class Lift extends Subsystem {
     		return 0;
     	}
     }
-    public Encoder getLiftEncoder(){
-    	return liftEncoder;
+    
+    public double getLiftEncoderDistance(){
+    	return liftEncoder.getDistance();
+    }
+    
+    /**
+     * Moves the lift to the goal location.
+     * @param goal The goal is the desired lift height.
+     */
+    public void liftCorrection(double goal){
+    	double error = goal-getLiftEncoderDistance();
+    	if (Math.abs(error) >= 4){
+    		set(Math.copySign(.6, error));
+    	}else if(Math.abs(error)<4 && Math.abs(error)>=1){
+    		set(Math.copySign(.3, error));
+    	}else{
+    		set(0);
+    	}
+    }
+    public boolean limitSwitchHit(int channel){
+    	return true;
     }
 }
 

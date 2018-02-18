@@ -7,13 +7,16 @@
 
 package org.usfirst.frc.team2830.robot.subsystems;
 
+import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -28,46 +31,45 @@ public class DriveTrain extends Subsystem {
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
-		
-		resetCounters();
-		
-	}
-	
-	public void driveTrainInit(){
+
 		RobotMap.talonLeft.configPeakCurrentLimit(35, 10);
 		RobotMap.talonLeft.configPeakCurrentDuration(200, 10);
 		RobotMap.talonLeft.configContinuousCurrentLimit(30, 10);
-		RobotMap.talonLeft.enableCurrentLimit(true);
+		RobotMap.talonLeft.enableCurrentLimit(false);
+		RobotMap.talonLeft.setSensorPhase(true);
 		
-		RobotMap.talonLeft.configNominalOutputForward(0, 10);
-		RobotMap.talonLeft.configNominalOutputReverse(0, 10);
-		RobotMap.talonLeft.configPeakOutputForward(1, 10);
-		RobotMap.talonLeft.configPeakOutputReverse(-1, 0);
-		
-		RobotMap.talonLeft.selectProfileSlot(0, 0);
-		RobotMap.talonLeft.config_kF(0, 0, 10);
-		RobotMap.talonLeft.config_kP(0, .2, 10);
-		RobotMap.talonLeft.config_kI(0, 0, 10);
-		RobotMap.talonLeft.config_kD(0, 0, 10);
-		RobotMap.talonLeft.config_IntegralZone(0, 100, 10);
+//		RobotMap.talonLeft.configNominalOutputForward(0, 10);
+//		RobotMap.talonLeft.configNominalOutputReverse(0, 10);
+//		RobotMap.talonLeft.configPeakOutputForward(1, 10);
+//		RobotMap.talonLeft.configPeakOutputReverse(-1, 0);
+//		
+//		RobotMap.talonLeft.selectProfileSlot(0, 0);
+//		RobotMap.talonLeft.config_kF(0, .3, 10);
+//		RobotMap.talonLeft.config_kP(0, .2, 10);
+//		RobotMap.talonLeft.config_kI(0, 0, 10);
+//		RobotMap.talonLeft.config_kD(0, 20, 10);
+//		RobotMap.talonLeft.config_IntegralZone(0, 100, 10);
+//		RobotMap.talonLeft.configMotionAcceleration(1, 10);
 		
 		RobotMap.talonRight.configPeakCurrentLimit(35, 10);
 		RobotMap.talonRight.configPeakCurrentDuration(200, 10);
 		RobotMap.talonRight.configContinuousCurrentLimit(30, 10);
-		RobotMap.talonRight.enableCurrentLimit(true);
+		RobotMap.talonRight.enableCurrentLimit(false);
+		RobotMap.talonRight.setSensorPhase(true);
 		
-		RobotMap.talonRight.configNominalOutputForward(0, 10);
-		RobotMap.talonRight.configNominalOutputReverse(0, 10);
-		RobotMap.talonRight.configPeakOutputForward(1, 10);
-		RobotMap.talonRight.configPeakOutputReverse(-1, 0);
+//		RobotMap.talonRight.configNominalOutputForward(0, 10);
+//		RobotMap.talonRight.configNominalOutputReverse(0, 10);
+//		RobotMap.talonRight.configPeakOutputForward(.7, 10);
+//		RobotMap.talonRight.configPeakOutputReverse(-.7, 0);
 		
-		RobotMap.talonRight.selectProfileSlot(0, 0);
-		RobotMap.talonRight.config_kF(0, .1, 10);
-		RobotMap.talonRight.config_kP(0, .2, 10);
-		RobotMap.talonRight.config_kI(0, 0, 10);
-		RobotMap.talonRight.config_kD(0, 0, 10);
-		RobotMap.talonRight.config_IntegralZone(0, 100, 10);
-		
+//		RobotMap.talonRight.selectProfileSlot(0, 0);
+//		RobotMap.talonRight.config_kF(0, .3, 10);
+//		RobotMap.talonRight.config_kP(0, .2, 10);
+//		RobotMap.talonRight.config_kI(0, 0, 10);
+//		RobotMap.talonRight.config_kD(0, 20, 10);
+//		RobotMap.talonRight.config_IntegralZone(0, 100, 10);
+//		RobotMap.talonRight.configMotionCruiseVelocity(getPulsesFromInches(3), 10);
+//		
 		
 	}
 	
@@ -78,6 +80,8 @@ public class DriveTrain extends Subsystem {
 		//RobotMap.leftEncoder.reset();
 		//RobotMap.rightEncoder.reset();
 		RobotMap.ahrs.zeroYaw();
+		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
+		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
 	}
 	
 	/**
@@ -98,7 +102,8 @@ public class DriveTrain extends Subsystem {
 	public void driveArcade(Joystick driverStick){
 		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
-		RobotMap.robotDrive.arcadeDrive(throttle, steering, true);
+		//RobotMap.robotDrive.arcadeDrive(throttle, steering);
+		RobotMap.robotDrive.tankDrive(throttle, throttle);
 		
 	}
 	
@@ -121,11 +126,19 @@ public class DriveTrain extends Subsystem {
 	 * Adds values to the shuffleboard.
 	 */
 	public void writeToSmartDashboard(){
-		SmartDashboard.putNumber("Left Encoder", getInchesFromPulses(RobotMap.talonLeft.getSelectedSensorPosition(0)));
-		SmartDashboard.putNumber("Right Encoder", getInchesFromPulses(RobotMap.talonRight.getSelectedSensorPosition(0)));
+		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
+		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
+		
+		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
+		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
+		
+		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
 		
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
+	//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
 	}
 	
 	/**
@@ -166,20 +179,20 @@ public class DriveTrain extends Subsystem {
 		
 		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
 		
-		if (speed >= 0){
-			if(rotation >= 0){
+		if (speed >= .02){
+			if(rotation >= 0.02){
 				RobotMap.talonLeft.set(ControlMode.PercentOutput, maxInput);
 				RobotMap.talonRight.set(ControlMode.PercentOutput, speed-rotation);
-			}else{
+			}else if (rotation <=-.02){
 				RobotMap.talonLeft.set(ControlMode.PercentOutput, speed+rotation);
 				RobotMap.talonRight.set(ControlMode.PercentOutput, maxInput);
 			}
 			
-		}else{
-			if(rotation >= 0){
+		}else if (rotation <-.02){
+			if(rotation >= 0.02){
 				RobotMap.talonLeft.set(ControlMode.PercentOutput, speed+rotation);
 				RobotMap.talonRight.set(ControlMode.PercentOutput, maxInput);
-			}else{
+			}else if (rotation <= -.02){
 				RobotMap.talonLeft.set(ControlMode.PercentOutput, maxInput);
 				RobotMap.talonRight.set(ControlMode.PercentOutput, speed+rotation);
 			}
