@@ -28,6 +28,9 @@ public class DriveTrain extends Subsystem {
 	
 	public double controllerCorrection = 0.35;
 	public double joystickDeadband = 0.02;
+	
+	double maxOutputLeft;
+	double maxOutputRight;
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
@@ -103,6 +106,12 @@ public class DriveTrain extends Subsystem {
 		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 		//RobotMap.robotDrive.arcadeDrive(throttle, steering);
+    	if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
+    		maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
+    	}
+    	if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
+    		maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
+    	}
 		RobotMap.robotDrive.tankDrive(throttle, throttle);
 		
 	}
@@ -136,6 +145,9 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
+		
+		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
+		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
 		
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
 	//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
