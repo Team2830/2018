@@ -15,6 +15,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -48,6 +49,9 @@ public class RobotMap {
 	public static SpeedController liftFront;
 	public static SpeedController liftBack;
 	
+	public static PowerDistributionPanel pdp;
+	
+	public static final int intakeChannel = 3;
 
 	/**
 	 * Initializes the speed controllers,
@@ -57,6 +61,8 @@ public class RobotMap {
 	 * 
 	 */
 	public static void init(){
+		pdp = new PowerDistributionPanel(20);
+		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
 		victorRight = new WPI_VictorSPX(1);
@@ -82,6 +88,7 @@ public class RobotMap {
 		robotDrive.setMaxOutput(1.0);
 		
 		intakeLeft = new Spark(0);
+		intakeLeft.setInverted(true);
 		intakeRight = new Spark(1);
 		liftFront = new Spark(2);
 		liftBack = new Spark(3);
