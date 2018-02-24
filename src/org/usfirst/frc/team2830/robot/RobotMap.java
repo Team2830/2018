@@ -67,6 +67,11 @@ public class RobotMap {
 		victorRight = new WPI_VictorSPX(1);
 		talonRight = new WPI_TalonSRX(0);
 		
+		talonRight.setInverted(true);
+		victorRight.setInverted(true);
+		talonLeft.setInverted(false);
+		victorLeft.setInverted(false);
+		
 		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		
