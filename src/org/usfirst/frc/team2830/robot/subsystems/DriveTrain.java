@@ -29,53 +29,93 @@ public class DriveTrain extends Subsystem {
 	public double controllerCorrection = 0.35;
 	public double joystickDeadband = 0.02;
 	
-	double maxOutputLeft;
-	double maxOutputRight;
+	double maxOutputLeft = 0.0;
+	double maxOutputRight = 0.0;
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
 
-//		RobotMap.talonLeft.configPeakCurrentLimit(35, 10);
-//		RobotMap.talonLeft.configPeakCurrentDuration(200, 10);
-//		RobotMap.talonLeft.configContinuousCurrentLimit(30, 10);
-//		RobotMap.talonLeft.enableCurrentLimit(false);
-//		RobotMap.talonLeft.setSensorPhase(true);
-		
-//		RobotMap.talonLeft.configNominalOutputForward(0, 10);
-//		RobotMap.talonLeft.configNominalOutputReverse(0, 10);
-		RobotMap.talonLeft.configPeakOutputForward(1, 10);
-		RobotMap.talonLeft.configPeakOutputReverse(-1, 0);
-//		
-//		RobotMap.talonLeft.selectProfileSlot(0, 0);
-//		RobotMap.talonLeft.config_kF(0, .3, 10);
-//		RobotMap.talonLeft.config_kP(0, .2, 10);
-//		RobotMap.talonLeft.config_kI(0, 0, 10);
-//		RobotMap.talonLeft.config_kD(0, 20, 10);
-//		RobotMap.talonLeft.config_IntegralZone(0, 100, 10);
-//		RobotMap.talonLeft.configMotionAcceleration(1, 10);
-		
-		//RobotMap.talonRight.configPeakCurrentLimit(35, 10);
-		//RobotMap.talonRight.configPeakCurrentDuration(200, 10);
-		//RobotMap.talonRight.configContinuousCurrentLimit(30, 10);
-//		RobotMap.talonRight.enableCurrentLimit(false);
-//		RobotMap.talonRight.setSensorPhase(true);
-		
-//		RobotMap.talonRight.configNominalOutputForward(0, 10);
-//		RobotMap.talonRight.configNominalOutputReverse(0, 10);
-		RobotMap.talonRight.configPeakOutputForward(1, 10);
-		RobotMap.talonRight.configPeakOutputReverse(-1, 0);
-		
-//		RobotMap.talonRight.selectProfileSlot(0, 0);
-//		RobotMap.talonRight.config_kF(0, .3, 10);
-//		RobotMap.talonRight.config_kP(0, .2, 10);
-//		RobotMap.talonRight.config_kI(0, 0, 10);
-//		RobotMap.talonRight.config_kD(0, 20, 10);
-//		RobotMap.talonRight.config_IntegralZone(0, 100, 10);
-//		RobotMap.talonRight.configMotionCruiseVelocity(getPulsesFromInches(3), 10);
-//		
-		maxOutputLeft = 0;
-		maxOutputRight = 0;
 	}
+
+	
+	/**
+	 * Resets the encoders and the gyroscope.
+	 */
+	public void resetCounters() {
+		//RobotMap.leftEncoder.reset();
+		//RobotMap.rightEncoder.reset();
+		RobotMap.ahrs.zeroYaw();
+		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
+		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
+	}
+	
+	/**
+	 * Calls arcadeDrive with given parameters
+	 * @param velocity Takes the speed.
+	 * @param rotation Takes the angle.
+	 */
+//	public void driveForward(double velocity, double rotation){
+//		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
+//	}
+	
+	/**
+	 * Takes inputs from driverStick and calls arcadeDrive to move the robot.
+	 * @param driverStick Takes input values and activates the drivetrain motors accordingly.
+	 * The throttle tells arcadeDrive how fast the robot should move.
+	 * Steering tells arcadeDrive how quickly the robot should turn.
+	 */
+	public void driveArcade(Joystick driverStick){
+		double throttle = (-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3);
+		double steering = driverStick.getRawAxis(0);
+		//RobotMap.robotDrive.arcadeDrive(throttle, steering);
+
+		RobotMap.talonRight.set(deadbanded(getRightThrottle(throttle, steering), joystickDeadband));
+		RobotMap.talonLeft.set(deadbanded(getLeftThrottle(throttle, steering), joystickDeadband));
+		writeToSmartDashboard();
+	}
+	
+	/**
+	 * Keeps the robot from driving when the controller values are minuscule.
+	 * @param input Controller input value.
+	 * @param deadband Lower threshold for controller input value.
+	 * @return Returns input if the controller input is greater than the deadband.
+	 * Otherwise returns the deadband.
+	 */
+	public double deadbanded(double input, double deadband){
+		if(Math.abs(input)>Math.abs(deadband)){
+			return input;
+		}else{
+			return 0;
+		}
+	}
+	
+	/**
+	 * Adds values to the shuffleboard.
+	 */
+	public void writeToSmartDashboard(){
+		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
+		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
+		
+		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
+		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
+		
+		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
+    	if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
+    		maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
+    	}
+    	if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
+    		maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
+    	}
+		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
+		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
+		
+		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
+	//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
+	}
+	
 	/**
 	 * This method takes the 2 inputs from the game pad and converts them into the Left side throttle
 	 * @param speed
@@ -128,85 +168,6 @@ public class DriveTrain extends Subsystem {
 			}
 		}
 	}
-	
-	/**
-	 * Resets the encoders and the gyroscope.
-	 */
-	public void resetCounters() {
-		//RobotMap.leftEncoder.reset();
-		//RobotMap.rightEncoder.reset();
-		RobotMap.ahrs.zeroYaw();
-		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
-		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
-	}
-	
-	/**
-	 * Calls arcadeDrive with given parameters
-	 * @param velocity Takes the speed.
-	 * @param rotation Takes the angle.
-	 */
-//	public void driveForward(double velocity, double rotation){
-//		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
-//	}
-	
-	/**
-	 * Takes inputs from driverStick and calls arcadeDrive to move the robot.
-	 * @param driverStick Takes input values and activates the drivetrain motors accordingly.
-	 * The throttle tells arcadeDrive how fast the robot should move.
-	 * Steering tells arcadeDrive how quickly the robot should turn.
-	 */
-	public void driveArcade(Joystick driverStick){
-		double throttle = (-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3);
-		double steering = driverStick.getRawAxis(0);
-		//RobotMap.robotDrive.arcadeDrive(throttle, steering);
-    	if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
-    		maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
-    	}
-    	if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
-    		maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
-    	}
-		RobotMap.talonRight.set(deadbanded(getRightThrottle(throttle, steering), joystickDeadband));
-		RobotMap.talonLeft.set(deadbanded(getLeftThrottle(throttle, steering), joystickDeadband));
-		
-	}
-	
-	/**
-	 * Keeps the robot from driving when the controller values are minuscule.
-	 * @param input Controller input value.
-	 * @param deadband Lower threshold for controller input value.
-	 * @return Returns input if the controller input is greater than the deadband.
-	 * Otherwise returns the deadband.
-	 */
-	public double deadbanded(double input, double deadband){
-		if(Math.abs(input)>Math.abs(deadband)){
-			return input;
-		}else{
-			return 0;
-		}
-	}
-	
-	/**
-	 * Adds values to the shuffleboard.
-	 */
-	public void writeToSmartDashboard(){
-		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
-		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
-		
-		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
-		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
-		
-		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
-		
-		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
-		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
-		
-		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
-	//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
-	}
-	
 	/**
 	 * Uses the gyroscope to ensure that the robot is driving straight.
 	 * Calls driveForward to correct the drive when the robot is not driving

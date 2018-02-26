@@ -77,8 +77,50 @@ public class RobotMap {
 		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
+
+		//Set the open loop ramp to prevent quick starts and stops
+		talonLeft.configOpenloopRamp(.25, 10);
+		talonRight.configOpenloopRamp(.25, 10);
 		
-		//Robot.driveTrain.driveTrainInit();
+//		talonLeft.configPeakCurrentLimit(35, 10);
+//		talonLeft.configPeakCurrentDuration(200, 10);
+//		talonLeft.configContinuousCurrentLimit(30, 10);
+//		talonLeft.enableCurrentLimit(false);
+//		talonLeft.setSensorPhase(true);
+		
+//		talonLeft.configNominalOutputForward(0, 10);
+//		talonLeft.configNominalOutputReverse(0, 10);
+		talonLeft.configPeakOutputForward(1, 10);
+		talonLeft.configPeakOutputReverse(-1, 10);
+//		
+//		talonLeft.selectProfileSlot(0, 0);
+//		talonLeft.config_kF(0, .3, 10);
+//		talonLeft.config_kP(0, .2, 10);
+//		talonLeft.config_kI(0, 0, 10);
+//		talonLeft.config_kD(0, 20, 10);
+//		talonLeft.config_IntegralZone(0, 100, 10);
+//		talonLeft.configMotionAcceleration(1, 10);
+		
+		//talonRight.configPeakCurrentLimit(35, 10);
+		//talonRight.configPeakCurrentDuration(200, 10);
+		//talonRight.configContinuousCurrentLimit(30, 10);
+//		talonRight.enableCurrentLimit(false);
+//		talonRight.setSensorPhase(true);
+		
+//		talonRight.configNominalOutputForward(0, 10);
+//		talonRight.configNominalOutputReverse(0, 10);
+		talonRight.configPeakOutputForward(1, 10);
+		talonRight.configPeakOutputReverse(-1, 0);
+		
+//		talonRight.selectProfileSlot(0, 0);
+//		talonRight.config_kF(0, .3, 10);
+//		talonRight.config_kP(0, .2, 10);
+//		talonRight.config_kI(0, 0, 10);
+//		talonRight.config_kD(0, 20, 10);
+//		talonRight.config_IntegralZone(0, 100, 10);
+//		talonRight.configMotionCruiseVelocity(getPulsesFromInches(3), 10);
+//		
+
 		
 		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
