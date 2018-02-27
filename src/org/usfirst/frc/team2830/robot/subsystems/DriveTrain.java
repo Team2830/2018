@@ -76,9 +76,9 @@ public class DriveTrain extends Subsystem {
 		
 
 		
-		if (steering == 0){
+		if (steering == 0 && Robot.oi.getDriverJoystick().getRawButton(1)){
 			
-			if(++drivingStraightCycleCount > 3){
+			if(++drivingStraightCycleCount > 25){
 				//code for driving straight logic
 				driveCorrection(bearing, throttle);
 			}else if(drivingStraightCycleCount == 3){
