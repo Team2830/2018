@@ -27,10 +27,15 @@ public class DriveTrain extends Subsystem {
 	// here. Call these from Commands.
 	
 	public double controllerCorrection = 0.35;
-	public double joystickDeadband = 0.02;
+	public double joystickDeadband = 0.2;
 	
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
+	
+	double bearing = 0;
+	int drivingStraightCycleCount = 0;
+	
+	
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
@@ -47,6 +52,7 @@ public class DriveTrain extends Subsystem {
 		RobotMap.ahrs.zeroYaw();
 		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
+		bearing = 0;
 	}
 	
 	/**
@@ -65,13 +71,54 @@ public class DriveTrain extends Subsystem {
 	 * Steering tells arcadeDrive how quickly the robot should turn.
 	 */
 	public void driveArcade(Joystick driverStick){
-		double throttle = (-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3);
-		double steering = driverStick.getRawAxis(0);
-		//RobotMap.robotDrive.arcadeDrive(throttle, steering);
+		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
+		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
+		
 
-		RobotMap.talonRight.set(deadbanded(getRightThrottle(throttle, steering), joystickDeadband));
-		RobotMap.talonLeft.set(deadbanded(getLeftThrottle(throttle, steering), joystickDeadband));
+		
+		if (steering == 0){
+			
+			if(++drivingStraightCycleCount > 3){
+				//code for driving straight logic
+				driveCorrection(bearing, throttle);
+			}else if(drivingStraightCycleCount == 3){
+				//set bearing, set isDrivingStraight to true, drive Straight
+				bearing = RobotMap.ahrs.getAngle();
+				driveCorrection(bearing, throttle);
+			}else{
+				driveUncorrected(throttle, steering);
+			}
+		}else{
+			//set isDrivingStraight to false, drive uncorrected
+			drivingStraightCycleCount = 0;
+			driveUncorrected(throttle, steering);
+		}
+		
+		
 		writeToSmartDashboard();
+	}
+
+
+	private void driveUncorrected(double throttle, double steering) {
+		double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
+		if (throttle >= 0){
+			if(steering >= 0){
+				RobotMap.talonLeft.set(maxInput);
+				RobotMap.talonRight.set(throttle-steering);
+			}else{
+				RobotMap.talonLeft.set(throttle+steering);
+				RobotMap.talonRight.set(maxInput);
+			}
+
+		}else{
+			if(steering >= 0){
+				RobotMap.talonLeft.set(throttle+steering);
+				RobotMap.talonRight.set(maxInput);
+			}else{
+				RobotMap.talonLeft.set(maxInput);
+				RobotMap.talonRight.set(throttle-steering);
+			}
+		}
 	}
 	
 	/**
@@ -103,6 +150,12 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
+		
+		SmartDashboard.putNumber("Bearing", bearing);
+		SmartDashboard.putNumber("Gyro Error", RobotMap.ahrs.getAngle()-bearing);
+		SmartDashboard.putNumber("Driving Straight Cycle Count", drivingStraightCycleCount);
+		SmartDashboard.putNumber("steering", deadbanded(Robot.oi.getDriverJoystick().getRawAxis(0), joystickDeadband));
+		
     	if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
     		maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
     	}
@@ -117,57 +170,85 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	/**
-	 * This method takes the 2 inputs from the game pad and converts them into the Left side throttle
-	 * @param speed
-	 * @param rotation
-	 * @return
+	 * Checks the gyro against setAngle.
+	 * 
+	 * If the difference (gyro angle - set angle) is greater than 1, 
+	 * turn the robot slightly to the left.
+	 * 
+	 * If the difference (gyro angle - set angle) is less than -1,
+	 * turn the robot slightly to the right.
+	 * 
+	 * @param presetAngle The preset angle
+	 * @param throttle The default driving speed
 	 */
-	public double getLeftThrottle(double speed, double rotation){
-		
-
-		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-		
-		if (speed >= 0){
-			if(rotation >= 0){
-				return maxInput;
-			}else{
-				return speed+rotation;
-			}
-			
+	public void driveCorrection(double presetAngle, double throttle){
+		if (RobotMap.ahrs.getAngle()-presetAngle > 1){
+			RobotMap.talonLeft.set(throttle*.60);
+			RobotMap.talonRight.set(throttle);
+		}else if(RobotMap.ahrs.getAngle()-presetAngle<-1){
+			RobotMap.talonLeft.set(throttle);
+			RobotMap.talonRight.set(throttle*.60);
 		}else{
-			if(rotation >= 0){
-				return speed+rotation;
-			}else{
-				return maxInput;
-			}
+			RobotMap.talonLeft.set(throttle);
+			RobotMap.talonRight.set(throttle);
 		}
 	}
 	
-	/**
-	 * This method takes the 2 inputs from the game pad and converts them into the Right side throttle
-	 * @param speed
-	 * @param rotation
-	 * @return
-	 */
-	public double getRightThrottle(double speed, double rotation){
-		
-		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-		
-		if (speed >= 0){
-			if(rotation >= 0){
-				return speed-rotation;
-			}else{
-				return maxInput;
-			}
-			
-		}else{
-			if(rotation >= 0){
-				return maxInput;
-			}else{
-				return speed-rotation;
-			}
-		}
-	}
+//	/**
+//	 * This method takes the 2 inputs from the game pad and converts them into the Left side throttle
+//	 * @param speed
+//	 * @param rotation
+//	 * @return
+//	 */
+//	public double getLeftThrottle(double speed, double rotation){
+//		speed = deadbanded(speed, joystickDeadband);
+//		rotation = deadbanded(rotation, joystickDeadband);
+//
+//		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
+//		
+//		if (speed >= 0){
+//			if(rotation >= 0){
+//				return maxInput;
+//			}else{
+//				return speed+rotation;
+//			}
+//			
+//		}else{
+//			if(rotation >= 0){
+//				return speed+rotation;
+//			}else{
+//				return maxInput;
+//			}
+//		}
+//	}
+//	
+//	/**
+//	 * This method takes the 2 inputs from the game pad and converts them into the Right side throttle
+//	 * @param speed
+//	 * @param rotation
+//	 * @return
+//	 */
+//	public double getRightThrottle(double speed, double rotation){
+//		speed = deadbanded(speed, joystickDeadband);
+//		rotation = deadbanded(rotation, joystickDeadband);
+//		
+//		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
+//		
+//		if (speed >= 0){
+//			if(rotation >= 0){
+//				return speed-rotation;
+//			}else{
+//				return maxInput;
+//			}
+//			
+//		}else{
+//			if(rotation >= 0){
+//				return maxInput;
+//			}else{
+//				return speed-rotation;
+//			}
+//		}
+//	}
 	/**
 	 * Uses the gyroscope to ensure that the robot is driving straight.
 	 * Calls driveForward to correct the drive when the robot is not driving
