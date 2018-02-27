@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -35,23 +36,21 @@ public class RobotMap {
 	public static WPI_TalonSRX talonLeft;
 	public static WPI_VictorSPX victorRight;
 	public static WPI_TalonSRX talonRight;
-	//public static SpeedControllerGroup speedControllerGroupLeft;
-	//public static SpeedControllerGroup speedControllerGroupRight;
 	public static DifferentialDrive robotDrive;
 	
-	public static Encoder leftEncoder;
-	public static Encoder rightEncoder;
 	
 	public static AHRS ahrs;
+	public static Encoder liftEncoder;
 	
 	public static SpeedController intakeLeft;
 	public static SpeedController intakeRight;
-	public static SpeedController liftFront;
-	public static SpeedController liftBack;
+	public static SpeedController liftLeft;
+	public static SpeedController liftRight;
 	
 	public static PowerDistributionPanel pdp;
 	
 	public static final int intakeChannel = 3;
+	
 
 	/**
 	 * Initializes the speed controllers,
@@ -68,30 +67,78 @@ public class RobotMap {
 		victorRight = new WPI_VictorSPX(1);
 		talonRight = new WPI_TalonSRX(0);
 		
+		talonRight.setInverted(true);
+		victorRight.setInverted(true);
+		talonLeft.setInverted(false);
+		victorLeft.setInverted(false);
+		
+		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
-		//speedControllerGroupLeft = new SpeedControllerGroup(speedControllerFrontLeft, speedControllerBackLeft);
-		//speedControllerGroupRight = new SpeedControllerGroup(speedControllerFrontRight, speedControllerBackRight);
+
+		//Set the open loop ramp to prevent quick starts and stops
+		talonLeft.configOpenloopRamp(.25, 10);
+		talonRight.configOpenloopRamp(.25, 10);
 		
-		robotDrive = new DifferentialDrive(talonLeft, talonRight);
+//		talonLeft.configPeakCurrentLimit(35, 10);
+//		talonLeft.configPeakCurrentDuration(200, 10);
+//		talonLeft.configContinuousCurrentLimit(30, 10);
+//		talonLeft.enableCurrentLimit(false);
+//		talonLeft.setSensorPhase(true);
 		
-		leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-		leftEncoder.setDistancePerPulse(0.052360);
+//		talonLeft.configNominalOutputForward(0, 10);
+//		talonLeft.configNominalOutputReverse(0, 10);
+		talonLeft.configPeakOutputForward(1, 10);
+		talonLeft.configPeakOutputReverse(-1, 10);
+//		
+//		talonLeft.selectProfileSlot(0, 0);
+//		talonLeft.config_kF(0, .3, 10);
+//		talonLeft.config_kP(0, .2, 10);
+//		talonLeft.config_kI(0, 0, 10);
+//		talonLeft.config_kD(0, 20, 10);
+//		talonLeft.config_IntegralZone(0, 100, 10);
+//		talonLeft.configMotionAcceleration(1, 10);
 		
-		rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-		rightEncoder.setDistancePerPulse(-0.052360);		
+		//talonRight.configPeakCurrentLimit(35, 10);
+		//talonRight.configPeakCurrentDuration(200, 10);
+		//talonRight.configContinuousCurrentLimit(30, 10);
+//		talonRight.enableCurrentLimit(false);
+//		talonRight.setSensorPhase(true);
+		
+//		talonRight.configNominalOutputForward(0, 10);
+//		talonRight.configNominalOutputReverse(0, 10);
+		talonRight.configPeakOutputForward(1, 10);
+		talonRight.configPeakOutputReverse(-1, 0);
+		
+//		talonRight.selectProfileSlot(0, 0);
+//		talonRight.config_kF(0, .3, 10);
+//		talonRight.config_kP(0, .2, 10);
+//		talonRight.config_kI(0, 0, 10);
+//		talonRight.config_kD(0, 20, 10);
+//		talonRight.config_IntegralZone(0, 100, 10);
+//		talonRight.configMotionCruiseVelocity(getPulsesFromInches(3), 10);
+//		
+
+		
+//		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
+		liftEncoder = new Encoder(0,1,true);
 		
-		robotDrive.setExpiration(0.1);
-		robotDrive.setSafetyEnabled(true);
-		robotDrive.setMaxOutput(1.0);
+//		robotDrive.setExpiration(0.1);
+//		robotDrive.setSafetyEnabled(true);
+//		robotDrive.setMaxOutput(1.0);
 		
 		intakeLeft = new Spark(0);
 		intakeLeft.setInverted(true);
 		intakeRight = new Spark(1);
-		liftFront = new Spark(2);
-		liftBack = new Spark(3);
+		intakeRight.setInverted(false);
+		
+		
+		liftLeft = new Spark(2);
+		liftRight = new Spark(3);
 	}
 	
 }

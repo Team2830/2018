@@ -24,9 +24,9 @@ public class Intake extends Subsystem {
     	RobotMap.intakeLeft.set(.8);
     	RobotMap.intakeRight.set(.8);
     }
-    public void intakeOut(){
-    	RobotMap.intakeLeft.set(-.5);
-    	RobotMap.intakeRight.set(-.5); 
+    public void intakeOut(){ 
+    	RobotMap.intakeLeft.set(-.8);
+    	RobotMap.intakeRight.set(-.8);
     	
     }
     public void intakeInSlow(){
@@ -45,9 +45,15 @@ public class Intake extends Subsystem {
      * @param operatorStick The joystick on which the checks will be enacted.
      */
     public void operateIntake(Joystick operatorStick){
+    	intakeCurrentOverride(Robot.oi.getOperatorJoystick());
     	if(operatorStick.getRawButton(1)){
-    		intakeIn();
+    		if(!currentLimitReached())
+    			intakeIn();
+    		else{
+    			intakeInSlow();
+    		}
     	}else if(operatorStick.getRawButton(2)){
+    		isCurrentLimitReached = false;
     		intakeOut();
     	}else{
     		stopIntake();
