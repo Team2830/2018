@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 		
-		m_chooser.addDefault("Default Auto", new ExampleCommand());
+		m_chooser.addDefault("Default Auto", new DriveDistance(50));
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
@@ -85,7 +86,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
+		//m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		m_autonomousCommand = m_chooser.getSelected();
 
 		/*

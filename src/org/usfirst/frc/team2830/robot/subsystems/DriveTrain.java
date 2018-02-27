@@ -13,6 +13,8 @@ import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -326,4 +328,14 @@ public class DriveTrain extends Subsystem {
 //	public double getInchesFromPulses(int pulses){
 //		return pulses*Math.PI/240;
 //	}
+	public double getDistance(){
+		return(RobotMap.talonLeft.getSelectedSensorPosition(0) + RobotMap.talonRight.getSelectedSensorPosition(0))/2;
+	}
+
+	public double getAngle() {
+		return RobotMap.ahrs.getAngle();
+	}
+	public void driveForward(double speed, double rotation){
+		RobotMap.robotDrive.arcadeDrive(speed, rotation);
+	}
 }
