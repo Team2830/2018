@@ -79,8 +79,8 @@ public class RobotMap {
 		victorRight.follow(talonRight);
 
 		//Set the open loop ramp to prevent quick starts and stops
-		talonLeft.configOpenloopRamp(.25, 10);
-		talonRight.configOpenloopRamp(.25, 10);
+		talonLeft.configOpenloopRamp(.5, 10);
+		talonRight.configOpenloopRamp(.5, 10);
 		
 //		talonLeft.configPeakCurrentLimit(35, 10);
 //		talonLeft.configPeakCurrentDuration(200, 10);
