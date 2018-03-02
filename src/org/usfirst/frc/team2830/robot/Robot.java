@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 		
-		m_chooser.addDefault("Default Auto", new DriveDistance(50));
+		m_chooser.addDefault("Default Auto", new DriveDistance(50, .4));
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}

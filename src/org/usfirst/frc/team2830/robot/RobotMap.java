@@ -79,14 +79,14 @@ public class RobotMap {
 		victorRight.follow(talonRight);
 
 		//Set the open loop ramp to prevent quick starts and stops
-		talonLeft.configOpenloopRamp(.5, 10);
-		talonRight.configOpenloopRamp(.5, 10);
+//		talonLeft.configOpenloopRamp(.5, 10);
+//		talonRight.configOpenloopRamp(.5, 10);
 		
 //		talonLeft.configPeakCurrentLimit(35, 10);
 //		talonLeft.configPeakCurrentDuration(200, 10);
 //		talonLeft.configContinuousCurrentLimit(30, 10);
 //		talonLeft.enableCurrentLimit(false);
-//		talonLeft.setSensorPhase(true);
+		talonLeft.setSensorPhase(true);
 		
 //		talonLeft.configNominalOutputForward(0, 10);
 //		talonLeft.configNominalOutputReverse(0, 10);
@@ -105,7 +105,7 @@ public class RobotMap {
 		//talonRight.configPeakCurrentDuration(200, 10);
 		//talonRight.configContinuousCurrentLimit(30, 10);
 //		talonRight.enableCurrentLimit(false);
-//		talonRight.setSensorPhase(true);
+		talonRight.setSensorPhase(true);
 		
 //		talonRight.configNominalOutputForward(0, 10);
 //		talonRight.configNominalOutputReverse(0, 10);

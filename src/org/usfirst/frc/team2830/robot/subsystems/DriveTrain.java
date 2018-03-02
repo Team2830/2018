@@ -321,13 +321,13 @@ public class DriveTrain extends Subsystem {
 //		return getInchesFromPulses(RobotMap.talonRight.getSelectedSensorPosition(0));
 //	}
 //	
-//	public int getPulsesFromInches(double inches){
-//		return (int)(240/Math.PI*inches);
-//	}
-//	
-//	public double getInchesFromPulses(int pulses){
-//		return pulses*Math.PI/240;
-//	}
+	public int getPulsesFromInches(double inches){
+		return (int)(240/Math.PI*inches);
+	}
+	
+	public double getInchesFromPulses(double d){
+		return d*Math.PI/240;
+	}
 	public double getDistance(){
 		return(RobotMap.talonLeft.getSelectedSensorPosition(0) + RobotMap.talonRight.getSelectedSensorPosition(0))/2;
 	}
@@ -336,6 +336,11 @@ public class DriveTrain extends Subsystem {
 		return RobotMap.ahrs.getAngle();
 	}
 	public void driveForward(double speed, double rotation){
-		RobotMap.robotDrive.arcadeDrive(speed, rotation);
+		this.driveUncorrected(speed, rotation);
+	}
+	public void setOpenloopRamp(double rampTime){
+		RobotMap.talonLeft.configOpenloopRamp(rampTime, 10);
+		RobotMap.talonRight.configOpenloopRamp(rampTime, 10);
+		
 	}
 }
