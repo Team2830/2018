@@ -16,13 +16,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class Lift extends PIDSubsystem {
-	static double kP = .1;
-	static double ki = .00;
+	static double kP = .02;
+	static double kI = .00001;
+	static double kD = 0;
 	
     public Lift() {
-		super(kP, ki, 0);
+		super(kP, kI, kD);
     	liftEncoder = RobotMap.liftEncoder;
-		setAbsoluteTolerance(50);
+		setAbsoluteTolerance(10);
+		this.setOutputRange(-.7, .7);
 		// TODO Auto-generated constructor stub
 	}
 	// Put methods for controlling this subsystem
@@ -41,7 +43,7 @@ public class Lift extends PIDSubsystem {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
   //  	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
-    	setDefaultCommand(new OperateLift());
+    	//setDefaultCommand(new OperateLift());
 
     	
     }
@@ -58,7 +60,7 @@ public class Lift extends PIDSubsystem {
 	public void writeToSmartDashboard(Joystick operatorStick) {
 		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
 		SmartDashboard.putNumber("PID Position", this.getPosition());
-		
+		SmartDashboard.putNumber("PID Error", this.getSetpoint()-this.getPosition());
 	}
     /**
      * Allows the operator to manually move the lift.
@@ -131,11 +133,7 @@ public class Lift extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		SmartDashboard.putNumber("PID output", output);
 		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
-		if (output < 0){
-			System.out.println("PID output negative" + output);
-		}else{
-			set(output);
-		}
+		set(output);
 		
 		
 	}

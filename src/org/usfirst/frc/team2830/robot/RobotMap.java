@@ -125,7 +125,7 @@ public class RobotMap {
 //		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
-		liftEncoder = new Encoder(0, 1, true);
+		liftEncoder = new Encoder(0, 1, false);
 		
 //		robotDrive.setExpiration(0.1);
 //		robotDrive.setSafetyEnabled(true);
@@ -138,7 +138,9 @@ public class RobotMap {
 		
 		
 		liftLeft = new Spark(2);
+		liftLeft.setInverted(true);
 		liftRight = new Spark(3);
+		liftRight.setInverted(true);
 	}
 	
 }

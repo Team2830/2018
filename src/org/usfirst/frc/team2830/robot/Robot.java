@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
 //		m_chooser.addDefault("Default Auto", new DriveDistance(50, .4));
 //		m_chooser.addDefault("Turn Auto", new Turn(90));
 //		chooser.addObject("My Auto", new MyAutoCommand());
-		m_chooser.addDefault("MoveLiftToSwitchHeight", new OperateLift());
+		m_chooser.addDefault("MoveLiftToSwitchHeight", new MoveLiftToSetPoint(2000));
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
