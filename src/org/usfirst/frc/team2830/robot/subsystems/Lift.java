@@ -4,6 +4,7 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.OperateLift;
+import org.usfirst.frc.team2830.robot.commands.testlift;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -40,7 +41,7 @@ public class Lift extends PIDSubsystem {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
   //  	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
-    	
+    	setDefaultCommand(new OperateLift());
 
     	
     }
@@ -49,8 +50,9 @@ public class Lift extends PIDSubsystem {
      * @param speed The speed from -1 to 1.
      */
     public void set(double speed){
-    	RobotMap.liftRight.pidWrite(speed);
-      	RobotMap.liftLeft.pidWrite(speed);
+    	RobotMap.liftRight.set(speed);
+      	RobotMap.liftLeft.set(speed);
+      	writeToSmartDashboard(Robot.oi.getOperatorJoystick());
     }
     
 	public void writeToSmartDashboard(Joystick operatorStick) {
@@ -129,8 +131,12 @@ public class Lift extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		SmartDashboard.putNumber("PID output", output);
 		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
+		if (output < 0){
+			System.out.println("PID output negative" + output);
+		}else{
+			set(output);
+		}
 		
-		set(output);
 		
 	}
 }
