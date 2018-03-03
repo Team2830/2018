@@ -7,6 +7,10 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -14,6 +18,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.opencv.core.Mat;
 import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
@@ -37,6 +42,9 @@ public class Robot extends TimedRobot {
 	public static OI oi;
 	public static Lift lift;
 	public static Intake intake;
+	Thread t;
+	
+	
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -54,6 +62,42 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 		
+//		t = new Thread(() -> {
+//			// Get the UsbCamera from CameraServer
+//			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+//			// Set the resolution
+//			camera.setResolution(640, 480);
+//
+//			// Get a CvSink. This will capture Mats from the camera
+//			CvSink cvSink = CameraServer.getInstance().getVideo();
+//			// Setup a CvSource. This will send images back to the Dashboard
+//			CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 640, 480);
+//
+//			// Mats are very memory expensive. Lets reuse this Mat.
+//			Mat mat = new Mat();
+//
+//			// This cannot be 'true'. The program will never exit if it is. This
+//			// lets the robot stop this thread when restarting robot code or
+//			// deploying.
+//			while (!Thread.interrupted()) {
+//				// Tell the CvSink to grab a frame from the camera and put it
+//				// in the source mat.  If there is an error notify the output.
+//				if (cvSink.grabFrame(mat) == 0) {
+//					// Send the output the error.
+//					outputStream.notifyError(cvSink.getError());
+//					// skip the rest of the current iteration
+//					continue;
+//				}
+//				// Put a rectangle on the image
+//			//	Imgproc.rectangle(mat, new Point(100, 100), new Point(400, 400),
+//				//		new Scalar(255, 255, 255), 5);
+//				// Give the output stream a new image to display
+//				outputStream.putFrame(mat);
+//			}
+//		});
+//		t.setDaemon(true);
+//		t.start();
+//		
 //		m_chooser.addDefault("Default Auto", new DriveDistance(50, .4));
 		m_chooser.addDefault("Turn Auto", new Turn(90));
 //		chooser.addObject("My Auto", new MyAutoCommand());

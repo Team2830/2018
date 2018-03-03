@@ -21,8 +21,8 @@ public class Intake extends Subsystem {
     }
     
     public void intakeIn(){
-    	RobotMap.intakeLeft.set(.8);
-    	RobotMap.intakeRight.set(.8);
+    	RobotMap.intakeLeft.set(1);
+    	RobotMap.intakeRight.set(1);
     }
     public void intakeOut(){ 
     	RobotMap.intakeLeft.set(-.8);
@@ -30,8 +30,8 @@ public class Intake extends Subsystem {
     	
     }
     public void intakeInSlow(){
-    	RobotMap.intakeLeft.set(.4);
-    	RobotMap.intakeRight.set(.4);
+    	RobotMap.intakeLeft.set(1);
+    	RobotMap.intakeRight.set(1);
     }
     /**
      * 

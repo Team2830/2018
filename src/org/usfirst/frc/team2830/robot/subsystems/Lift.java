@@ -1,33 +1,44 @@
 package org.usfirst.frc.team2830.robot.subsystems;
 
+import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
+import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.OperateLift;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class Lift extends Subsystem {
-
-    // Put methods for controlling this subsystem
+public class Lift extends PIDSubsystem {
+	static double kP = 4;
+	static double ki = .07;
+	
+    public Lift() {
+		super(kP, ki, 0);
+		setAbsoluteTolerance(50);
+		// TODO Auto-generated constructor stub
+	}
+	// Put methods for controlling this subsystem
     // here. Call these from Commands.
 	public double joystickDeadband = .02;
 	private Encoder liftEncoder;
-	public int liftHeightIndex = 0;
+	public int liftHeightIndex = 1;
+	public double liftGoal;
 	
-	public double switchHeight;
-	public double lowScaleHeight;
-	public double midScaleHeight;
-	public double tallScaleHeight;
+	public final double switchHeight = 3*1440;
+	public final double lowScaleHeight = 5*1440;
+	public final double midScaleHeight = 7*1440;
+	public final double tallScaleHeight = 10*1440;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
-    	setDefaultCommand(new OperateLift());
+    	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
     	
     	liftEncoder = RobotMap.liftEncoder;
     	liftEncoder.reset();
@@ -49,41 +60,71 @@ public class Lift extends Subsystem {
      * Allows the operator to manually move the lift.
      * @param operatorStick The operator joystick.
      */
-    public void operateLift(Joystick operatorStick){
-    	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(speed*speed);
-    }
+//    public void operateLift(Joystick operatorStick){
+//    	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+//    	set(speed);
+    	//set(Math.copySign(speed*speed, speed));
+//    }
     
-    public double deadbanded(double input, double deadband){
-    	if (Math.abs(input) > Math.abs(deadband)){
-    		return input;
-    	}
-    	else {
-    		return 0;
-    	}
-    }
+//    public double deadbanded(double input, double deadband){
+//    	if (Math.abs(input) > Math.abs(deadband)){
+//    		return input;
+//    	}
+//    	else {
+//    		return 0;
+//    	}
+//    }
     
     public double getLiftEncoderDistance(){
     	return liftEncoder.getDistance();
     }
     
-    /**
-     * Moves the lift to the goal location.
-     * @param goal The goal is the desired lift height.
-     */
-    public void liftCorrection(double goal){
-    	double error = goal-getLiftEncoderDistance();
-    	if (Math.abs(error) >= 4){
-    		set(Math.copySign(.6, error));
-    	}else if(Math.abs(error)<4 && Math.abs(error)>=1){
-    		set(Math.copySign(.3, error));
-    	}else{
-    		set(0);
-    	}
-    }
+
     public boolean limitSwitchHit(int channel){
     	return true;
     }
+    
+    public double getLiftSetHeight(int index){
+    	
+    	
+    	switch (index){
+    	
+    	case 0: liftGoal = 0;
+    	break;
+
+    	case 1: liftGoal = switchHeight;
+    	break;
+
+    	case 2: liftGoal = lowScaleHeight;
+    	break;
+
+    	case 3: liftGoal = midScaleHeight;
+    	break;
+
+    	case 4: liftGoal = tallScaleHeight;
+    	break;
+    	}
+    	return liftGoal;
+    }
+    public double setHeightIndex(Joystick operatorStick){
+    	if (operatorStick.getPOV() == 0 && liftHeightIndex < 4){
+    		liftHeightIndex += 1;
+    	}else if (operatorStick.getPOV() == 180 && liftHeightIndex > 0){
+    		liftHeightIndex -= 1;
+    	}
+    	return getLiftSetHeight(liftHeightIndex);
+    }
+    
+	@Override
+	protected double returnPIDInput() {
+		// TODO Auto-generated method stub
+		return getLiftEncoderDistance();
+	}
+	@Override
+	protected void usePIDOutput(double output) {
+		set(output);
+		
+	}
 }
 
 

@@ -125,7 +125,7 @@ public class RobotMap {
 //		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
-		liftEncoder = new Encoder(0,1,true);
+		liftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 		
 //		robotDrive.setExpiration(0.1);
 //		robotDrive.setSafetyEnabled(true);
