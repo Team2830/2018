@@ -18,6 +18,11 @@ public class Lift extends Subsystem {
 	public double joystickDeadband = .02;
 	private Encoder liftEncoder;
 	public int liftHeightIndex = 0;
+	
+	public double switchHeight;
+	public double lowScaleHeight;
+	public double midScaleHeight;
+	public double tallScaleHeight;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
