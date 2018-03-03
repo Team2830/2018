@@ -30,7 +30,7 @@ public class Lift extends PIDSubsystem {
 	public int liftHeightIndex = 1;
 	public double liftGoal;
 	
-	public final double switchHeight = 3*1440;
+	public final double switchHeight = 2000;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
 	public final double tallScaleHeight = 10*1440;
@@ -41,7 +41,7 @@ public class Lift extends PIDSubsystem {
     	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
     	
     	liftEncoder = RobotMap.liftEncoder;
-    	liftEncoder.reset();
+
     	
     }
     /**
@@ -78,7 +78,9 @@ public class Lift extends PIDSubsystem {
     public double getLiftEncoderDistance(){
     	return liftEncoder.getDistance();
     }
-    
+    public void resetEncoder(){
+    	liftEncoder.reset();
+    }
 
     public boolean limitSwitchHit(int channel){
     	return true;

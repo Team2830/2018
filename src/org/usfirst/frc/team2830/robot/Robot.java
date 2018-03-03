@@ -22,6 +22,7 @@ import org.opencv.core.Mat;
 import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
+import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.Turn;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.Intake;
@@ -99,8 +100,9 @@ public class Robot extends TimedRobot {
 //		t.start();
 //		
 //		m_chooser.addDefault("Default Auto", new DriveDistance(50, .4));
-		m_chooser.addDefault("Turn Auto", new Turn(90));
+//		m_chooser.addDefault("Turn Auto", new Turn(90));
 //		chooser.addObject("My Auto", new MyAutoCommand());
+		m_chooser.addDefault("MoveLiftToSwitchHeight", new MoveLiftToSetPoint(2000));
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 

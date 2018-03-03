@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2830.robot.commands;
 
 import org.usfirst.frc.team2830.robot.Robot;
+import org.usfirst.frc.team2830.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -19,8 +20,10 @@ public class MoveLiftToSetPoint extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.lift.setSetpoint(liftGoalHeight);
+    	Robot.lift.resetEncoder();
     	Robot.lift.enable();
+    	Robot.lift.setSetpoint(liftGoalHeight);
+
     }
 
     // Called repeatedly when this Command is scheduled to run
