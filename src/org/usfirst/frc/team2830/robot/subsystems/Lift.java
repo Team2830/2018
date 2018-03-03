@@ -15,11 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class Lift extends PIDSubsystem {
-	static double kP = 4;
-	static double ki = .07;
+	static double kP = .1;
+	static double ki = .00;
 	
     public Lift() {
 		super(kP, ki, 0);
+    	liftEncoder = RobotMap.liftEncoder;
 		setAbsoluteTolerance(50);
 		// TODO Auto-generated constructor stub
 	}
@@ -38,9 +39,8 @@ public class Lift extends PIDSubsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
-    	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
+  //  	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
     	
-    	liftEncoder = RobotMap.liftEncoder;
 
     	
     }
@@ -49,12 +49,14 @@ public class Lift extends PIDSubsystem {
      * @param speed The speed from -1 to 1.
      */
     public void set(double speed){
-    	RobotMap.liftRight.set(speed);
-    	RobotMap.liftLeft.set(speed);
+    	RobotMap.liftRight.pidWrite(speed);
+      	RobotMap.liftLeft.pidWrite(speed);
     }
     
 	public void writeToSmartDashboard(Joystick operatorStick) {
 		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
+		SmartDashboard.putNumber("PID Position", this.getPosition());
+		
 	}
     /**
      * Allows the operator to manually move the lift.
@@ -120,10 +122,14 @@ public class Lift extends PIDSubsystem {
 	@Override
 	protected double returnPIDInput() {
 		// TODO Auto-generated method stub
+//		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
 		return getLiftEncoderDistance();
 	}
 	@Override
 	protected void usePIDOutput(double output) {
+		SmartDashboard.putNumber("PID output", output);
+		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
+		
 		set(output);
 		
 	}
