@@ -52,12 +52,13 @@ public class Lift extends PIDSubsystem {
      * @param speed The speed from -1 to 1.
      */
     public void set(double speed){
+    	writeToSmartDashboard();
     	RobotMap.liftRight.set(speed);
       	RobotMap.liftLeft.set(speed);
-      	writeToSmartDashboard(Robot.oi.getOperatorJoystick());
+      	
     }
     
-	public void writeToSmartDashboard(Joystick operatorStick) {
+	public void writeToSmartDashboard() {
 		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
 		SmartDashboard.putNumber("PID Position", this.getPosition());
 		SmartDashboard.putNumber("PID Error", this.getSetpoint()-this.getPosition());
@@ -66,20 +67,21 @@ public class Lift extends PIDSubsystem {
      * Allows the operator to manually move the lift.
      * @param operatorStick The operator joystick.
      */
-//    public void operateLift(Joystick operatorStick){
-//    	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-//    	set(speed);
-    	//set(Math.copySign(speed*speed, speed));
-//    }
+
+    public void operateLift(Joystick operatorStick){
+    	double speed = -1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	set(speed);
+    }
+
     
-//    public double deadbanded(double input, double deadband){
-//    	if (Math.abs(input) > Math.abs(deadband)){
-//    		return input;
-//    	}
-//    	else {
-//    		return 0;
-//    	}
-//    }
+    public double deadbanded(double input, double deadband){
+    	if (Math.abs(input) > Math.abs(deadband)){
+    		return input;
+    	}
+    	else {
+    		return 0;
+    	}
+    }
     
     public double getLiftEncoderDistance(){
     	return liftEncoder.getDistance();
@@ -132,7 +134,7 @@ public class Lift extends PIDSubsystem {
 	@Override
 	protected void usePIDOutput(double output) {
 		SmartDashboard.putNumber("PID output", output);
-		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
+		writeToSmartDashboard();
 		set(output);
 		
 		

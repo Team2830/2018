@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * to a variable name. This provides flexibility changing wiring, makes checking
  * the wiring easier and significantly reduces the number of magic numbers
  * floating around.
- */
+ */ 
 public class RobotMap {
 	public static WPI_VictorSPX victorLeft;
 	public static WPI_TalonSRX talonLeft;
@@ -64,8 +64,8 @@ public class RobotMap {
 		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
-		victorRight = new WPI_VictorSPX(1);
-		talonRight = new WPI_TalonSRX(0);
+		victorRight = new WPI_VictorSPX(21);
+		talonRight = new WPI_TalonSRX(20);
 		
 		talonRight.setInverted(true);
 		victorRight.setInverted(true);
@@ -79,8 +79,9 @@ public class RobotMap {
 		victorRight.follow(talonRight);
 
 		//Set the open loop ramp to prevent quick starts and stops
-//		talonLeft.configOpenloopRamp(.5, 10);
-//		talonRight.configOpenloopRamp(.5, 10);
+
+		talonLeft.configOpenloopRamp(.5, 10);
+		talonRight.configOpenloopRamp(.5, 10);
 		
 //		talonLeft.configPeakCurrentLimit(35, 10);
 //		talonLeft.configPeakCurrentDuration(200, 10);
@@ -125,8 +126,9 @@ public class RobotMap {
 //		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
+
 		liftEncoder = new Encoder(0, 1, false);
-		
+
 //		robotDrive.setExpiration(0.1);
 //		robotDrive.setSafetyEnabled(true);
 //		robotDrive.setMaxOutput(1.0);
