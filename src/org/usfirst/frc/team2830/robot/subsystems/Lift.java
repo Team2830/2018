@@ -46,7 +46,7 @@ public class Lift extends Subsystem {
      * @param operatorStick The operator joystick.
      */
     public void operateLift(Joystick operatorStick){
-    	double speed = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	double speed = -1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	set(speed);
     }
     

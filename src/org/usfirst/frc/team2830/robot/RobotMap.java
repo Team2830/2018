@@ -138,7 +138,9 @@ public class RobotMap {
 		
 		
 		liftLeft = new Spark(2);
+		liftLeft.setInverted(true);
 		liftRight = new Spark(3);
+		liftRight.setInverted(true);
 	}
 	
 }
