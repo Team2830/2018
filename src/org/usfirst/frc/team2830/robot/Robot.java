@@ -26,6 +26,7 @@ import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.OperateLift;
 import org.usfirst.frc.team2830.robot.commands.Turn;
 import org.usfirst.frc.team2830.robot.commands.testlift;
+import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseSwitch;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.Intake;
 import org.usfirst.frc.team2830.robot.subsystems.Lift;
@@ -104,7 +105,7 @@ public class Robot extends TimedRobot {
 //		m_chooser.addDefault("Default Auto", new DriveDistance(50, .4));
 //		m_chooser.addDefault("Turn Auto", new Turn(90));
 //		chooser.addObject("My Auto", new MyAutoCommand());
-		m_chooser.addDefault("MoveLiftToSwitchHeight", new MoveLiftToSetPoint(2000));
+		m_chooser.addDefault("MoveLiftToSwitchHeight", new RightCloseSwitch());
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 

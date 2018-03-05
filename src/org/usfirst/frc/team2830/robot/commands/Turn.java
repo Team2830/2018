@@ -49,7 +49,7 @@ public class Turn extends Command {
 		requires(Robot.driveTrain);
 	}
 	public Turn(double TurnAngle) {
-		this(TurnAngle, .4);
+		this(TurnAngle, .5);
 	}
 
 	// Called just before this Command runs the first time
