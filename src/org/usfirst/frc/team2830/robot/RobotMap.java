@@ -64,8 +64,8 @@ public class RobotMap {
 		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
-		victorRight = new WPI_VictorSPX(1);
-		talonRight = new WPI_TalonSRX(0);
+		victorRight = new WPI_VictorSPX(21);
+		talonRight = new WPI_TalonSRX(20);
 		
 		talonRight.setInverted(true);
 		victorRight.setInverted(true);
