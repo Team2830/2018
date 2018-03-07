@@ -49,7 +49,7 @@ public class Turn extends Command {
 		requires(Robot.driveTrain);
 	}
 	public Turn(double TurnAngle) {
-		this(TurnAngle, .5);
+		this(TurnAngle, .30);
 	}
 
 	// Called just before this Command runs the first time
@@ -59,18 +59,18 @@ public class Turn extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		if(isFirstRun){
-			Robot.driveTrain.resetCounters();
-			isFirstRun = false;
-		}
+//		if(isFirstRun){
+//			Robot.driveTrain.resetCounters();
+//			isFirstRun = false;
+//		}
 		error = m_TurnAngle - RobotMap.ahrs.getAngle();
 
 		if (Math.abs(error) <=25 ){
 			if (error > 0){
-				Robot.driveTrain.driveForward(0, m_turnSpeed-.2);
+				Robot.driveTrain.driveForward(0, m_turnSpeed-.04);
 			}
 			else if (error < 0){
-				Robot.driveTrain.driveForward(0, -1*m_turnSpeed + .2);
+				Robot.driveTrain.driveForward(0, -1*m_turnSpeed + .04);
 			}
 		}
 		else{

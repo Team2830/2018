@@ -34,7 +34,7 @@ public class Lift extends PIDSubsystem {
 	public int liftHeightIndex = 1;
 	public double liftGoal;
 	
-	public final double switchHeight = 2000;
+	public final double switchHeight = 1800;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
 	public final double tallScaleHeight = 10*1440;

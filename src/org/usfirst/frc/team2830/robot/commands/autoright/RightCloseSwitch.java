@@ -30,10 +30,11 @@ public class RightCloseSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new DriveDistance(12*14));
-    	addSequential(new Turn(-90));
-    	addSequential(new DriveDistance(10));
+    //	addParallel(new DriveDistance(12*11, .5));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-    	addSequential(new IntakeOut());
+//    	addSequential(new Turn(-90));
+//    	addParallel(new DriveDistance(10));
+//    	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
+//    	addSequential(new IntakeOut());
     }
 }

@@ -139,6 +139,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		//m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		m_autonomousCommand = m_chooser.getSelected();
+		Robot.driveTrain.resetCounters();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",

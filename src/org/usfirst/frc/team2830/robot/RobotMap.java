@@ -60,7 +60,7 @@ public class RobotMap {
 	 * 
 	 */
 	public static void init(){
-		pdp = new PowerDistributionPanel(20);
+		pdp = new PowerDistributionPanel(0);
 		
 		victorLeft = new WPI_VictorSPX(14);
 		talonLeft = new WPI_TalonSRX(15);
@@ -80,8 +80,8 @@ public class RobotMap {
 
 		//Set the open loop ramp to prevent quick starts and stops
 
-		talonLeft.configOpenloopRamp(.5, 10);
-		talonRight.configOpenloopRamp(.5, 10);
+		talonLeft.configOpenloopRamp(.4, 10);
+		talonRight.configOpenloopRamp(.4, 10);
 		
 //		talonLeft.configPeakCurrentLimit(35, 10);
 //		talonLeft.configPeakCurrentDuration(200, 10);

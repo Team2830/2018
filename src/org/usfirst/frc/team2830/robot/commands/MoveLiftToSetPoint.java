@@ -24,6 +24,7 @@ public class MoveLiftToSetPoint extends Command {
     	Robot.lift.resetEncoder();
     	Robot.lift.enable();
     	Robot.lift.setSetpoint(liftGoalHeight);
+    	SmartDashboard.putBoolean("Lift Finished", false);
 
     }
 
