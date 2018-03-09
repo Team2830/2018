@@ -78,22 +78,15 @@ public class DriveDistance extends Command {
        	SmartDashboard.putNumber("Ramp Velocity", v);
        	SmartDashboard.putNumber("Distance Driven", Robot.driveTrain.getInchesFromPulses(x));
        	
-       	if(Robot.driveTrain.getAngle()>1.00){
-    		Robot.driveTrain.driveForward(v,-.3);
-    	}
-    	else if(Robot.driveTrain.getAngle()<-1.00){
-    		Robot.driveTrain.driveForward(v,.3);
-    	}
-    	else{
-    		Robot.driveTrain.driveForward(v,0);
-    	}
+       	
+    	Robot.driveTrain.driveStraight(v);
        	
     }
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
 		if (m_distance <= Robot.driveTrain.getDistance()) {
-			Robot.driveTrain.driveForward(0, 0);
+			Robot.driveTrain.driveStraight(0);
 			Robot.driveTrain.resetCounters();
 			return true;
 		}
@@ -102,12 +95,12 @@ public class DriveDistance extends Command {
 
 	// Called once after isFinished returns true
 	protected void end() {
-		Robot.driveTrain.driveForward(0, 0);
+		Robot.driveTrain.driveStraight(0);
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	protected void interrupted() {
-		Robot.driveTrain.driveForward(0, 0);
+		Robot.driveTrain.driveStraight(0);
 	}
 }

@@ -128,6 +128,7 @@ public class RobotMap {
 		ahrs = new AHRS(SerialPort.Port.kUSB1);
 
 		liftEncoder = new Encoder(0, 1, false);
+		
 
 //		robotDrive.setExpiration(0.1);
 //		robotDrive.setSafetyEnabled(true);

@@ -16,6 +16,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -24,27 +26,52 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
  */
-public class DriveTrain extends Subsystem {
+public class DriveTrain extends Subsystem implements PIDOutput {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
-	
+
 	public double controllerCorrection = 0.35;
 	public double joystickDeadband = 0.2;
-	
+
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
-	
+
 	double bearing = 0;
 	int drivingStraightCycleCount = 0;
-	
-	
+
+	PIDController turnController;
+	double rotateToAngleRate;
+
+	/* The following PID Controller coefficients will need to be tuned */
+	/* to match the dynamics of your drive system.  Note that the      */
+	/* SmartDashboard in Test mode has support for helping you tune    */
+	/* controllers by displaying a form where you can enter new P, I,  */
+	/* and D constants and test the mechanism.                         */
+
+	static final double kP = 0.03;
+	static final double kI = 0.00;
+	static final double kD = 0.00;
+	static final double kF = 0.00;
+
+	/* This tuning parameter indicates how close to "on target" the    */
+	/* PID Controller will attempt to get.                             */
+
+	static final double kToleranceDegrees = 2.0f;
+
+	public DriveTrain(){
+		turnController = new PIDController(kP, kI, kD, kF, RobotMap.ahrs, this);
+		turnController.setInputRange(-180.0f,  180.0f);
+		turnController.setOutputRange(-1.0, 1.0);
+		turnController.setAbsoluteTolerance(kToleranceDegrees);
+		turnController.setContinuous(true);
+	}
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ArcadeDrive());
 
 	}
 
-	
+
 	/**
 	 * Resets the encoders and the gyroscope.
 	 */
@@ -56,16 +83,16 @@ public class DriveTrain extends Subsystem {
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
 		bearing = 0;
 	}
-	
+
 	/**
 	 * Calls arcadeDrive with given parameters
 	 * @param velocity Takes the speed.
 	 * @param rotation Takes the angle.
 	 */
-//	public void driveForward(double velocity, double rotation){
-//		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
-//	}
-	
+	//	public void driveForward(double velocity, double rotation){
+	//		RobotMap.robotDrive.arcadeDrive(velocity, rotation);
+	//	}
+
 	/**
 	 * Takes inputs from driverStick and calls arcadeDrive to move the robot.
 	 * @param driverStick Takes input values and activates the drivetrain motors accordingly.
@@ -73,56 +100,37 @@ public class DriveTrain extends Subsystem {
 	 * Steering tells arcadeDrive how quickly the robot should turn.
 	 */
 	public void driveArcade(Joystick driverStick){
-		double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
-		double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
-		
 
-		
-		if (steering == 0 && Robot.oi.getDriverJoystick().getRawButton(1)){
+		if(turnController.isEnabled() && this.onTarget()){
+			this.disablePID();
+		}
+		if(!turnController.isEnabled()){
+			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
+			double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 			
-			if(++drivingStraightCycleCount > 25){
-				//code for driving straight logic
-				driveCorrection(bearing, throttle);
-			}else if(drivingStraightCycleCount == 3){
-				//set bearing, set isDrivingStraight to true, drive Straight
-				bearing = RobotMap.ahrs.getAngle();
-				driveCorrection(bearing, throttle);
-			}else{
-				driveUncorrected(throttle, steering);
-			}
-		}else{
-			//set isDrivingStraight to false, drive uncorrected
-			drivingStraightCycleCount = 0;
-			driveUncorrected(throttle, steering);
-		}
-		
-		
-		writeToSmartDashboard();
-	}
+			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
+			if (throttle >= 0){
+				if(steering >= 0){
+					RobotMap.talonLeft.set(maxInput);
+					RobotMap.talonRight.set(throttle-steering);
+				}else{
+					RobotMap.talonLeft.set(throttle+steering);
+					RobotMap.talonRight.set(maxInput);
+				}
 
-
-	private void driveUncorrected(double throttle, double steering) {
-		double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
-		if (throttle >= 0){
-			if(steering >= 0){
-				RobotMap.talonLeft.set(maxInput);
-				RobotMap.talonRight.set(throttle-steering);
 			}else{
-				RobotMap.talonLeft.set(throttle+steering);
-				RobotMap.talonRight.set(maxInput);
+				if(steering >= 0){
+					RobotMap.talonLeft.set(throttle+steering);
+					RobotMap.talonRight.set(maxInput);
+				}else{
+					RobotMap.talonLeft.set(maxInput);
+					RobotMap.talonRight.set(throttle-steering);
+				}
 			}
-
-		}else{
-			if(steering >= 0){
-				RobotMap.talonLeft.set(throttle+steering);
-				RobotMap.talonRight.set(maxInput);
-			}else{
-				RobotMap.talonLeft.set(maxInput);
-				RobotMap.talonRight.set(throttle-steering);
-			}
+			writeToSmartDashboard();
 		}
 	}
-	
+
 	/**
 	 * Keeps the robot from driving when the controller values are minuscule.
 	 * @param input Controller input value.
@@ -137,7 +145,7 @@ public class DriveTrain extends Subsystem {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Adds values to the shuffleboard.
 	 */
@@ -145,32 +153,32 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
 		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
-		
+
 		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
 		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
-		
+
 		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
-		
+
 		SmartDashboard.putNumber("Bearing", bearing);
 		SmartDashboard.putNumber("Gyro Error", RobotMap.ahrs.getAngle()-bearing);
 		SmartDashboard.putNumber("Driving Straight Cycle Count", drivingStraightCycleCount);
 		SmartDashboard.putNumber("steering", deadbanded(Robot.oi.getDriverJoystick().getRawAxis(0), joystickDeadband));
-		
-    	if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
-    		maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
-    	}
-    	if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
-    		maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
-    	}
+
+		if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
+			maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
+		}
+		if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
+			maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
+		}
 		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
 		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
-		
+
 		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
-	//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
+		//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
 	}
-	
+
 	/**
 	 * Checks the gyro against setAngle.
 	 * 
@@ -183,148 +191,36 @@ public class DriveTrain extends Subsystem {
 	 * @param presetAngle The preset angle
 	 * @param throttle The default driving speed
 	 */
-	public void driveCorrection(double presetAngle, double throttle){
-		if (RobotMap.ahrs.getAngle()-presetAngle > 1){
-			RobotMap.talonLeft.set(throttle*.60);
-			RobotMap.talonRight.set(throttle);
-		}else if(RobotMap.ahrs.getAngle()-presetAngle<-1){
-			RobotMap.talonLeft.set(throttle);
-			RobotMap.talonRight.set(throttle*.60);
-		}else{
-			RobotMap.talonLeft.set(throttle);
-			RobotMap.talonRight.set(throttle);
+	public void driveStraight(double throttle){
+		if(turnController.isEnabled() && this.onTarget()){
+			this.disablePID();
 		}
+		if(!turnController.isEnabled()){
+			if (RobotMap.ahrs.getAngle() > 1){
+				RobotMap.talonLeft.set(throttle*.60);
+				RobotMap.talonRight.set(throttle);
+			}else if(RobotMap.ahrs.getAngle()<-1){
+				RobotMap.talonLeft.set(throttle);
+				RobotMap.talonRight.set(throttle*.60);
+			}else{
+				RobotMap.talonLeft.set(throttle);
+				RobotMap.talonRight.set(throttle);
+			}
+		}
+       	
 	}
-	
-//	/**
-//	 * This method takes the 2 inputs from the game pad and converts them into the Left side throttle
-//	 * @param speed
-//	 * @param rotation
-//	 * @return
-//	 */
-//	public double getLeftThrottle(double speed, double rotation){
-//		speed = deadbanded(speed, joystickDeadband);
-//		rotation = deadbanded(rotation, joystickDeadband);
-//
-//		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-//		
-//		if (speed >= 0){
-//			if(rotation >= 0){
-//				return maxInput;
-//			}else{
-//				return speed+rotation;
-//			}
-//			
-//		}else{
-//			if(rotation >= 0){
-//				return speed+rotation;
-//			}else{
-//				return maxInput;
-//			}
-//		}
-//	}
-//	
-//	/**
-//	 * This method takes the 2 inputs from the game pad and converts them into the Right side throttle
-//	 * @param speed
-//	 * @param rotation
-//	 * @return
-//	 */
-//	public double getRightThrottle(double speed, double rotation){
-//		speed = deadbanded(speed, joystickDeadband);
-//		rotation = deadbanded(rotation, joystickDeadband);
-//		
-//		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-//		
-//		if (speed >= 0){
-//			if(rotation >= 0){
-//				return speed-rotation;
-//			}else{
-//				return maxInput;
-//			}
-//			
-//		}else{
-//			if(rotation >= 0){
-//				return maxInput;
-//			}else{
-//				return speed-rotation;
-//			}
-//		}
-//	}
+
+
 	/**
 	 * Uses the gyroscope to ensure that the robot is driving straight.
 	 * Calls driveForward to correct the drive when the robot is not driving
 	 * within 1 degree of straight.
 	 * @param velocity Takes the velocity of the robot to use when calling driveForward for the correction.
 	 */
-//	public void driveCorrection(double velocity){
-//
-//       	if(RobotMap.ahrs.getAngle()<-1.00){
-//    		driveForward(velocity,.3);
-//    		SmartDashboard.putString("Turn Direction", "left");
-//    	}
-//    	else if(RobotMap.ahrs.getAngle()>1.00){
-//    		driveForward(velocity,-.3);
-//    		SmartDashboard.putString("Turn Direction", "right");
-//    	}
-//    	else{
-//    		driveForward(velocity,0);
-//    		SmartDashboard.putString("Turn Direction", "straight");
-//    	}
-//	}
-//	public double getProfileSpeed(double endDistance, double maxSpeed){
-//       	double distanceDriven = getDrivenDistance();
-//       	double minSpeed = .6;
-//       	double rampDistance = Math.min(18,endDistance/2);
-//       	double brakeStartDistance = endDistance-Math.min(18,endDistance/2);
-//       	if (distanceDriven>brakeStartDistance)
-//       		 return maxSpeed+((minSpeed-maxSpeed)/(endDistance-brakeStartDistance))*(distanceDriven-brakeStartDistance);
-//       	else if (distanceDriven<rampDistance)
-//       		return minSpeed+((maxSpeed-minSpeed)/rampDistance)*distanceDriven;
-//       	else
-//      		return maxSpeed;
-//	}
-	
-//	public void controlDriveArcade(double speed, double rotation){
-//		
-//		double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-//		
-//		if (speed >= .02){
-//			if(rotation >= 0.02){
-//				RobotMap.talonLeft.set(ControlMode.PercentOutput, maxInput);
-//				RobotMap.talonRight.set(ControlMode.PercentOutput, speed-rotation);
-//			}else if (rotation <=-.02){
-//				RobotMap.talonLeft.set(ControlMode.PercentOutput, speed+rotation);
-//				RobotMap.talonRight.set(ControlMode.PercentOutput, maxInput);
-//			}
-//			
-//		}else if (rotation <-.02){
-//			if(rotation >= 0.02){
-//				RobotMap.talonLeft.set(ControlMode.PercentOutput, speed+rotation);
-//				RobotMap.talonRight.set(ControlMode.PercentOutput, maxInput);
-//			}else if (rotation <= -.02){
-//				RobotMap.talonLeft.set(ControlMode.PercentOutput, maxInput);
-//				RobotMap.talonRight.set(ControlMode.PercentOutput, speed+rotation);
-//			}
-//		}
-//	}
-//	
-//	public void driveDistanceStraight(double distance, double speed){
-//		driveCorrection(getProfileSpeed(distance, speed));
-//		
-//	}
-//	public void stopDriving(){
-//		RobotMap.robotDrive.arcadeDrive(0, 0);
-//	}
-//	
-//	public double getDrivenDistance(){
-//		return getInchesFromPulses(RobotMap.talonRight.getSelectedSensorPosition(0));
-//	}
-//	
 	public int getPulsesFromInches(double inches){
 		return (int)(240/Math.PI*inches);
 	}
-	
+
 	public double getInchesFromPulses(double d){
 		return d*Math.PI/240;
 	}
@@ -335,12 +231,25 @@ public class DriveTrain extends Subsystem {
 	public double getAngle() {
 		return RobotMap.ahrs.getAngle();
 	}
-	public void driveForward(double speed, double rotation){
-		this.driveUncorrected(speed, rotation);
-	}
 	public void setOpenloopRamp(double rampTime){
 		RobotMap.talonLeft.configOpenloopRamp(rampTime, 10);
 		RobotMap.talonRight.configOpenloopRamp(rampTime, 10);
-		
+	}
+	public void turnToAngle(double setAngle){
+		turnController.setSetpoint(setAngle);
+		turnController.enable();
+	}
+	public void disablePID(){
+		turnController.disable();
+	}
+	public boolean onTarget(){
+		return turnController.onTarget();
+	}
+	@Override
+	/* This function is invoked periodically by the PID Controller, */
+	/* based upon navX-MXP yaw angle input and PID Coefficients.    */
+	public void pidWrite(double output) {
+		RobotMap.talonLeft.set(output);
+		RobotMap.talonRight.set(-output);
 	}
 }
