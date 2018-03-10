@@ -30,12 +30,12 @@ public class CenterRightSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new DriveDistance(15));
-    	addSequential(new Turn(45));
-    	addSequential(new DriveDistance(9*12));
-    	addSequential(new Turn(-45));
-    	addSequential(new DriveDistance(15));
+   // 	addSequential(new DriveDistance(15));
+   // 	addSequential(new Turn(45));
+   // 	addSequential(new DriveDistance(9*12));
+   // 	addSequential(new Turn(-45));
+   // 	addSequential(new DriveDistance(15));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-    	addSequential(new IntakeOut());
+   // 	addSequential(new IntakeOut());
     }
 }

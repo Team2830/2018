@@ -21,6 +21,9 @@ public class MoveLiftToSetPoint extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	/**
+    	 * TODO move these to the Lift Class
+    	 */
     	Robot.lift.resetEncoder();
     	Robot.lift.enable();
     	Robot.lift.setSetpoint(liftGoalHeight);

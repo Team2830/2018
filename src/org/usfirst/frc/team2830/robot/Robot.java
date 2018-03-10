@@ -181,6 +181,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		Robot.driveTrain.writeToSmartDashboard();
+		Robot.lift.writeToSmartDashboard();
 		
 	}
 

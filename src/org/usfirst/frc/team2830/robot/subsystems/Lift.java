@@ -43,10 +43,11 @@ public class Lift extends PIDSubsystem {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
   //  	setDefaultCommand(new MoveLiftToSetPoint(setHeightIndex(Robot.oi.getOperatorJoystick())));
-    	//setDefaultCommand(new OperateLift());
+    	setDefaultCommand(new OperateLift());
 
     	
     }
+    
     /**
      * Sets the speed of the motor controllers.
      * @param speed The speed from -1 to 1.
@@ -60,15 +61,20 @@ public class Lift extends PIDSubsystem {
     
 	public void writeToSmartDashboard() {
 		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
-		SmartDashboard.putNumber("PID Position", this.getPosition());
-		SmartDashboard.putNumber("PID Error", this.getSetpoint()-this.getPosition());
+		SmartDashboard.putNumber("LIFT PID Position", this.getPosition());
+		SmartDashboard.putNumber("LIFT PID Error", this.getSetpoint()-this.getPosition());
 	}
+	
     /**
      * Allows the operator to manually move the lift.
      * @param operatorStick The operator joystick.
      */
-
     public void operateLift(Joystick operatorStick){
+    	
+/**
+ *  
+ *  TODO instead of set speed, use this as an incrementer to increment the setpoint	
+ */
     	double speed = -1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	set(speed);
     }
