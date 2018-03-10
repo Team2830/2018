@@ -11,16 +11,10 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -36,7 +30,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
 
-	double bearing = 0;
 	int drivingStraightCycleCount = 0;
 
 	PIDController turnController;
@@ -81,7 +74,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		RobotMap.ahrs.zeroYaw();
 		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
-		bearing = 0;
 	}
 
 	/**
@@ -100,13 +92,15 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * Steering tells arcadeDrive how quickly the robot should turn.
 	 */
 	public void driveArcade(Joystick driverStick){
-
+/**
+ * TODO try to dampen joystick input
+ */
 		if(turnController.isEnabled() && this.onTarget()){
 			this.disablePID();
 		}
-		if(!turnController.isEnabled()){
+		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
-			double steering = deadbanded(driverStick.getRawAxis(0), joystickDeadband);
+			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 			
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
 			if (throttle >= 0){
@@ -161,8 +155,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
 
-		SmartDashboard.putNumber("Bearing", bearing);
-		SmartDashboard.putNumber("Gyro Error", RobotMap.ahrs.getAngle()-bearing);
 		SmartDashboard.putNumber("Driving Straight Cycle Count", drivingStraightCycleCount);
 		SmartDashboard.putNumber("steering", deadbanded(Robot.oi.getDriverJoystick().getRawAxis(0), joystickDeadband));
 

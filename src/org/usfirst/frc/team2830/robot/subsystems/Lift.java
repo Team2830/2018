@@ -2,14 +2,10 @@ package org.usfirst.frc.team2830.robot.subsystems;
 
 import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
-import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.OperateLift;
-import org.usfirst.frc.team2830.robot.commands.testlift;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -25,7 +21,7 @@ public class Lift extends PIDSubsystem {
     	liftEncoder = RobotMap.liftEncoder;
 		setAbsoluteTolerance(10);
 		this.setOutputRange(-.7, .7);
-		// TODO Auto-generated constructor stub
+		enable();
 	}
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -69,14 +65,17 @@ public class Lift extends PIDSubsystem {
      * Allows the operator to manually move the lift.
      * @param operatorStick The operator joystick.
      */
-    public void operateLift(Joystick operatorStick){
+    public double operateLift(Joystick operatorStick){
     	
 /**
- *  
- *  TODO instead of set speed, use this as an incrementer to increment the setpoint	
+ *  TODO Change factor to max speed (units/20ms)	
  */
-    	double speed = -1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(speed);
+    	double newSetPoint = getSetpoint()-1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	return newSetPoint;
+    }
+    
+    public void moveToSetPoint(double setPoint){
+    	Robot.lift.setSetpoint(setPoint);
     }
 
     
@@ -100,8 +99,7 @@ public class Lift extends PIDSubsystem {
     	return true;
     }
     
-    public double getLiftSetHeight(int index){
-    	
+    public double getLiftSetHeight(int index){	
     	
     	switch (index){
     	
@@ -133,7 +131,6 @@ public class Lift extends PIDSubsystem {
     
 	@Override
 	protected double returnPIDInput() {
-		// TODO Auto-generated method stub
 //		writeToSmartDashboard(Robot.oi.getOperatorJoystick());
 		return getLiftEncoderDistance();
 	}
@@ -142,8 +139,6 @@ public class Lift extends PIDSubsystem {
 		SmartDashboard.putNumber("PID output", output);
 		writeToSmartDashboard();
 		set(output);
-		
-		
 	}
 }
 

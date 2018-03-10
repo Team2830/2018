@@ -7,31 +7,16 @@
 
 package org.usfirst.frc.team2830.robot;
 
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.opencv.core.Mat;
-import org.usfirst.frc.team2830.robot.commands.DriveDistance;
-import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
-import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
-import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
-import org.usfirst.frc.team2830.robot.commands.OperateLift;
-import org.usfirst.frc.team2830.robot.commands.Turn;
-import org.usfirst.frc.team2830.robot.commands.testlift;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseSwitch;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.Intake;
 import org.usfirst.frc.team2830.robot.subsystems.Lift;
-
-import com.kauailabs.navx.frc.AHRS;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,7 +31,6 @@ public class Robot extends TimedRobot {
 	public static OI oi;
 	public static Lift lift;
 	public static Intake intake;
-	Thread t;
 	
 	
 	
