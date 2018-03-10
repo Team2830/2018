@@ -8,21 +8,15 @@
 package org.usfirst.frc.team2830.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 /**
@@ -47,7 +41,6 @@ public class RobotMap {
 	public static SpeedController liftLeft;
 	public static SpeedController liftRight;
 	
-	public static PowerDistributionPanel pdp;
 	
 	public static final int intakeChannel = 3;
 	
@@ -124,7 +117,7 @@ public class RobotMap {
 		
 //		robotDrive = new DifferentialDrive(talonLeft, talonRight);	
 		
-		ahrs = new AHRS(SerialPort.Port.kUSB1);
+
 
 		liftEncoder = new Encoder(0, 1, false);
 		

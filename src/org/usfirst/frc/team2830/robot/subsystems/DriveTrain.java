@@ -11,9 +11,12 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -50,9 +53,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* PID Controller will attempt to get.                             */
 
 	static final double kToleranceDegrees = 2.0f;
-
+	
+	AHRS navx;
+	
 	public DriveTrain(){
-		turnController = new PIDController(kP, kI, kD, kF, RobotMap.ahrs, this); 
+		navx = new AHRS(SerialPort.Port.kUSB1);
+		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
 		turnController.setOutputRange(-1.0, 1.0);
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
@@ -71,7 +77,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public void resetCounters() {
 		//RobotMap.leftEncoder.reset();
 		//RobotMap.rightEncoder.reset();
-		RobotMap.ahrs.zeroYaw();
+		navx.zeroYaw();
 		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
 	}
@@ -167,7 +173,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
 		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
 
-		SmartDashboard.putNumber("Gyro Angle", RobotMap.ahrs.getAngle());
+		SmartDashboard.putNumber("Gyro Angle", navx.getAngle());
 		//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
 	}
 
@@ -188,10 +194,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			this.disablePID();
 		}
 		if(!turnController.isEnabled()){
-			if (RobotMap.ahrs.getAngle() > 1){
+			if (navx.getAngle() > 1){
 				RobotMap.talonLeft.set(throttle*.60);
 				RobotMap.talonRight.set(throttle);
-			}else if(RobotMap.ahrs.getAngle()<-1){
+			}else if(navx.getAngle()<-1){
 				RobotMap.talonLeft.set(throttle);
 				RobotMap.talonRight.set(throttle*.60);
 			}else{
@@ -221,7 +227,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public double getAngle() {
-		return RobotMap.ahrs.getAngle();
+		return navx.getAngle();
 	}
 	public void setOpenloopRamp(double rampTime){
 		RobotMap.talonLeft.configOpenloopRamp(rampTime, 10);
