@@ -20,7 +20,8 @@ public class Lift extends PIDSubsystem {
 		super(kP, kI, kD);
     	liftEncoder = RobotMap.liftEncoder;
 		setAbsoluteTolerance(10);
-		this.setOutputRange(-.7, .7);
+		this.setOutputRange(-.8, .8);
+		setSetpoint(0);
 		enable();
 	}
 	// Put methods for controlling this subsystem
@@ -30,7 +31,7 @@ public class Lift extends PIDSubsystem {
 	public int liftHeightIndex = 1;
 	public double liftGoal;
 	
-	public final double switchHeight = 1800;
+	public final double switchHeight = 1500;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
 	public final double tallScaleHeight = 10*1440;
@@ -65,13 +66,13 @@ public class Lift extends PIDSubsystem {
      * Allows the operator to manually move the lift.
      * @param operatorStick The operator joystick.
      */
-    public double operateLift(Joystick operatorStick){
+    public void operateLift(Joystick operatorStick){
     	
 /**
  *  TODO Change factor to max speed (units/20ms)	
  */
-    	double newSetPoint = getSetpoint()-1*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	return newSetPoint;
+    	double newSetPoint = getSetpoint()-20*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	moveToSetPoint(newSetPoint);
     }
     
     public void moveToSetPoint(double setPoint){

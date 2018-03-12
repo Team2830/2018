@@ -6,6 +6,7 @@ import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.Turn;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -30,11 +31,11 @@ public class RightCloseSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    //	addParallel(new DriveDistance(12*11, .5));
+    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
+    	addSequential(new DriveDistance(12*11, .5, .75));
+    	addSequential(new Turn(-90));
+    	addParallel(new DriveDistance(15));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-//    	addSequential(new Turn(-90));
-//    	addParallel(new DriveDistance(10));
-//    	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-//    	addSequential(new IntakeOut());
+    	addSequential(new IntakeOut());
     }
 }

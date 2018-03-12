@@ -30,9 +30,10 @@ public class LeftCloseSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new DriveDistance(12*14));
+    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
+    	addSequential(new DriveDistance(12*11, .5, .75));
     	addSequential(new Turn(90));
-    	addSequential(new DriveDistance(10));
+    	addParallel(new DriveDistance(15));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
     	addSequential(new IntakeOut());
     }

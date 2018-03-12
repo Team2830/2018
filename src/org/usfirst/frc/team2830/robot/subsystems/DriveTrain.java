@@ -44,8 +44,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* controllers by displaying a form where you can enter new P, I,  */
 	/* and D constants and test the mechanism.                         */
 
-	static final double kP = 0.03;
-	static final double kI = 0.00;
+	static final double kP = 0.05;
+	static final double kI = 0.005;
 	static final double kD = 0.00;
 	static final double kF = 0.00;
 
@@ -60,9 +60,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		navx = new AHRS(SerialPort.Port.kUSB1);
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
-		turnController.setOutputRange(-1.0, 1.0);
+		turnController.setOutputRange(-.6, .6);
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
+		//turnController.disable();
 	}
 
 	public void initDefaultCommand() {
