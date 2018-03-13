@@ -34,7 +34,7 @@ public class Lift extends PIDSubsystem {
 	public final double switchHeight = 1500;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
-	public final double tallScaleHeight = 10*1440;
+	public final double tallScaleHeight = 3360;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

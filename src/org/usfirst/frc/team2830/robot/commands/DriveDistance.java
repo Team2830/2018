@@ -66,15 +66,16 @@ public class DriveDistance extends Command {
     	}*/
         double v;
        	double x = Robot.driveTrain.getDistance();
-       	double rampDistance = Robot.driveTrain.getPulsesFromInches(18);
-       	double vMin = .2;
-       	double xRamp = Math.min(rampDistance,m_distance/2);
-       	double xBrake = m_distance-Math.min(rampDistance,m_distance/2);
-       	if (x>xBrake){
+       	double rampDown = Robot.driveTrain.getPulsesFromInches(Math.copySign(70, m_distance));
+       	double rampUp = Robot.driveTrain.getPulsesFromInches(Math.copySign(18, m_distance));
+       	double vMin = Math.copySign(.2, m_distance);
+       	double xRamp = Math.min(rampUp,m_distance/2);
+       	double xBrake = m_distance-Math.min(rampDown,m_distance/2);
+       	if (Math.abs(x)>Math.abs(xBrake)){
 //       		v=(vMin-m_speed)/(m_distance-xBrake)*(2*(x-m_distance));
        		v= m_speed-((m_speed-vMin)/(m_distance-xBrake))*(x-xBrake);
        	}
-       	else if (x<xRamp)
+       	else if (Math.abs(x)<Math.abs(xRamp))
        		v=vMin+((m_speed-vMin)/xRamp)*x;
        	else
       		v=m_speed;
