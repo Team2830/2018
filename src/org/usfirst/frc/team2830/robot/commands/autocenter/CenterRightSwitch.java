@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2830.robot.commands.autocenter;
 
 import org.usfirst.frc.team2830.robot.Robot;
+import org.usfirst.frc.team2830.robot.commands.DriveBackwards;
 import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
@@ -30,12 +31,15 @@ public class CenterRightSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-   // 	addSequential(new DriveDistance(15));
-   // 	addSequential(new Turn(45));
-   // 	addSequential(new DriveDistance(9*12));
-   // 	addSequential(new Turn(-45));
-   // 	addSequential(new DriveDistance(15));
-    	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-   // 	addSequential(new IntakeOut());
+    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
+    	addSequential(new DriveDistance(15));
+    	addSequential(new Turn(45));
+    	addSequential(new DriveDistance(4*12));
+    	addSequential(new Turn(-53));
+    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight));
+    	addSequential(new DriveDistance(15));
+    	addSequential(new IntakeOut());
+    	addSequential(new DriveBackwards(12*2));
+    	addSequential(new MoveLiftToSetPoint(0));
     }
 }

@@ -44,9 +44,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* controllers by displaying a form where you can enter new P, I,  */
 	/* and D constants and test the mechanism.                         */
 
-	static final double kP = 0.06;
-	static final double kI = 0.0055;
-	static final double kD = 0.00;
+//	static final double kP = 0.06;
+//	static final double kI = 0.0055;
+	
+	static final double kP = 0.01;
+	static final double kI = 0.000;
+	static final double kD = 0.0002;
 	static final double kF = 0.00;
 
 	/* This tuning parameter indicates how close to "on target" the    */
@@ -60,7 +63,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		navx = new AHRS(SerialPort.Port.kUSB1);
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
-		turnController.setOutputRange(-.4, .4);
+		turnController.setOutputRange(-.5, .5);
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
 		//turnController.disable();
@@ -108,7 +111,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
-
+SmartDashboard.putNumber("Steering", steering);
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
 			if (throttle >= 0){
 				if(steering >= 0){
@@ -262,7 +265,22 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* This function is invoked periodically by the PID Controller, */
 	/* based upon navX-MXP yaw angle input and PID Coefficients.    */
 	public void pidWrite(double output) {
-		RobotMap.talonLeft.set(output);
-		RobotMap.talonRight.set(-output);
+		/**
+		 * TODO add a "deadband" for the output
+		 */
+		if (!onTarget()){
+			
+			if (Math.abs(output) < .33){
+				RobotMap.talonLeft.set(Math.copySign(.33, output));
+				RobotMap.talonRight.set(Math.copySign(.33, -output));
+			} else {
+				RobotMap.talonLeft.set(output);
+				RobotMap.talonRight.set(-output);
+			}
+		}
+		else {
+			RobotMap.talonLeft.set(0);
+			RobotMap.talonRight.set(0);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team2830.robot.commands.autoright;
+package org.usfirst.frc.team2830.robot.commands.autoleft;
 
 import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.commands.DriveBackwards;
@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightFarScale extends CommandGroup {
+public class LeftFarScale extends CommandGroup {
 
-    public RightFarScale() {
+    public LeftFarScale() {
         // Add Commands here:
         // e.g. addSequential(new Command1());
         //      addSequential(new Command2());
@@ -34,9 +34,9 @@ public class RightFarScale extends CommandGroup {
 
   	addParallel(new MoveLiftToSetPoint(750));
     	addSequential(new DriveDistance(12*16-6,.7,.3));
-    	addSequential(new Turn(-92));
+    	addSequential(new Turn(88));
     	addSequential(new DriveDistance(12*16,.7,.3));
-    	addSequential(new Turn(100));
+    	addSequential(new Turn(-120));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.tallScaleHeight));
     	addSequential(new DriveDistance(16,.4,0));
     	addSequential(new IntakeOut());

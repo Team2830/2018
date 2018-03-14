@@ -19,8 +19,8 @@ public class Lift extends PIDSubsystem {
     public Lift() {
 		super(kP, kI, kD);
     	liftEncoder = RobotMap.liftEncoder;
-		setAbsoluteTolerance(10);
-		this.setOutputRange(-.8, .8);
+		setAbsoluteTolerance(50);
+		this.setOutputRange(-.9, .9);
 		setSetpoint(0);
 		enable();
 	}

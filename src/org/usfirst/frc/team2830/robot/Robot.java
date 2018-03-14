@@ -13,7 +13,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team2830.robot.commands.autocenter.CenterLeftSwitch;
+import org.usfirst.frc.team2830.robot.commands.autocenter.CenterRightSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoleft.LeftCloseSwitch;
+import org.usfirst.frc.team2830.robot.commands.autoleft.LeftFarScale;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseScale;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightFarScale;
@@ -53,7 +56,7 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 
-		m_chooser.addDefault("MoveLiftToSwitchHeight", new RightFarScale());
+		m_chooser.addDefault("MoveLiftToSwitchHeight", new CenterLeftSwitch());
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
@@ -88,6 +91,7 @@ public class Robot extends TimedRobot {
 		//m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		m_autonomousCommand = m_chooser.getSelected();
 		Robot.driveTrain.resetCounters();
+		Robot.lift.enable();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -117,6 +121,7 @@ public class Robot extends TimedRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
+		Robot.lift.disable();
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
