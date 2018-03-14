@@ -26,7 +26,7 @@ public class Lift extends PIDSubsystem {
 	}
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
-	public double joystickDeadband = .02;
+	public double joystickDeadband = .05;
 	private Encoder liftEncoder;
 	public int liftHeightIndex = 1;
 	public double liftGoal;
@@ -71,8 +71,8 @@ public class Lift extends PIDSubsystem {
 /**
  *  TODO Change factor to max speed (units/20ms)	
  */
-    	double newSetPoint = getSetpoint()-20*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	moveToSetPoint(newSetPoint);
+    	double newSetPoint = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	set(-newSetPoint);
     }
     
     public void moveToSetPoint(double setPoint){
