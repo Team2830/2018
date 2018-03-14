@@ -23,8 +23,8 @@ public class Intake extends Subsystem {
     	RobotMap.intakeRight.set(.4);
     }
     public void intakeOut(){ 
-    	RobotMap.intakeLeft.set(-.4);
-    	RobotMap.intakeRight.set(-.4);
+    	RobotMap.intakeLeft.set(-.5);
+    	RobotMap.intakeRight.set(-.5);
     }	
     public void stopIntake(){
     	RobotMap.intakeLeft.stopMotor();

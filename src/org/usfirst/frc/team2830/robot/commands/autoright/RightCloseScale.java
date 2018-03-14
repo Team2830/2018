@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2830.robot.commands.autoright;
 
 import org.usfirst.frc.team2830.robot.Robot;
+import org.usfirst.frc.team2830.robot.commands.DriveBackwards;
 import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
@@ -30,13 +31,14 @@ public class RightCloseScale extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
+
     	addParallel(new MoveLiftToSetPoint(750));
     	addSequential(new DriveDistance(12*18));
     	addSequential(new Turn(-45));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.tallScaleHeight));
     	addSequential(new DriveDistance(12*2));
     	addSequential(new IntakeOut());
-    	addSequential(new DriveDistance(12*-2));
-//    	addSequential(new MoveLiftToSetPoint(750));
+    	addSequential(new DriveBackwards(12*2));
+    	addSequential(new MoveLiftToSetPoint(750));
     }
 }

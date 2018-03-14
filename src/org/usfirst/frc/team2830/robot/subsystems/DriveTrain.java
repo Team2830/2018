@@ -44,8 +44,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* controllers by displaying a form where you can enter new P, I,  */
 	/* and D constants and test the mechanism.                         */
 
-	static final double kP = 0.04;
-	static final double kI = 0.005;
+	static final double kP = 0.06;
+	static final double kI = 0.0055;
 	static final double kD = 0.00;
 	static final double kF = 0.00;
 
@@ -53,14 +53,14 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* PID Controller will attempt to get.                             */
 
 	static final double kToleranceDegrees = 2.0f;
-	
+
 	AHRS navx;
-	
+
 	public DriveTrain(){
 		navx = new AHRS(SerialPort.Port.kUSB1);
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
-		turnController.setOutputRange(-.6, .6);
+		turnController.setOutputRange(-.4, .4);
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
 		//turnController.disable();
@@ -99,16 +99,16 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * Steering tells arcadeDrive how quickly the robot should turn.
 	 */
 	public void driveArcade(Joystick driverStick){
-/**
- * TODO try to dampen joystick input
- */
+		/**
+		 * TODO try to dampen joystick input
+		 */
 		if(turnController.isEnabled() && this.onTarget()){
 			this.disablePID();
 		}
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
-			
+
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
 			if (throttle >= 0){
 				if(steering >= 0){
@@ -195,19 +195,33 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			this.disablePID();
 		}
 		if(!turnController.isEnabled()){
-			if (navx.getAngle() > 1){
-				RobotMap.talonLeft.set(throttle*.60);
-				RobotMap.talonRight.set(throttle);
-			}else if(navx.getAngle()<-1){
-				RobotMap.talonLeft.set(throttle);
-				RobotMap.talonRight.set(throttle*.60);
-			}else{
-				RobotMap.talonLeft.set(throttle);
-				RobotMap.talonRight.set(throttle);
+			if(throttle > 0){
+				if (navx.getAngle() > 1){
+					RobotMap.talonLeft.set(throttle*.60);
+					RobotMap.talonRight.set(throttle);
+				}else if(navx.getAngle()< -1){
+					RobotMap.talonLeft.set(throttle);
+					RobotMap.talonRight.set(throttle*.60);
+				}else{
+					RobotMap.talonLeft.set(throttle);
+					RobotMap.talonRight.set(throttle);
+				}
+			}
+			else{
+				if (navx.getAngle() > 1){
+					RobotMap.talonLeft.set(throttle);
+					RobotMap.talonRight.set(throttle*.60);
+				}else if(navx.getAngle()< -1){
+					RobotMap.talonLeft.set(throttle*.60);
+					RobotMap.talonRight.set(throttle);
+				}else{
+					RobotMap.talonLeft.set(throttle);
+					RobotMap.talonRight.set(throttle);
+				}
 			}
 		}
-       	
 	}
+
 
 
 	/**

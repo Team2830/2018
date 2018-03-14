@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team2830.robot.commands.autoleft.LeftCloseSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseScale;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseSwitch;
+import org.usfirst.frc.team2830.robot.commands.autoright.RightFarScale;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.Intake;
 import org.usfirst.frc.team2830.robot.subsystems.Lift;
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 
-		m_chooser.addDefault("MoveLiftToSwitchHeight", new RightCloseScale());
+		m_chooser.addDefault("MoveLiftToSwitchHeight", new RightFarScale());
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
