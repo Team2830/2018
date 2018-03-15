@@ -7,19 +7,24 @@
 
 package org.usfirst.frc.team2830.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.autocenter.CenterLeftSwitch;
 import org.usfirst.frc.team2830.robot.commands.autocenter.CenterRightSwitch;
+import org.usfirst.frc.team2830.robot.commands.autoleft.LeftCloseScale;
 import org.usfirst.frc.team2830.robot.commands.autoleft.LeftCloseSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoleft.LeftFarScale;
+import org.usfirst.frc.team2830.robot.commands.autoleft.LeftFarSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseScale;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightCloseSwitch;
 import org.usfirst.frc.team2830.robot.commands.autoright.RightFarScale;
+import org.usfirst.frc.team2830.robot.commands.autoright.RightFarSwitch;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.Intake;
 import org.usfirst.frc.team2830.robot.subsystems.Lift;
@@ -42,7 +47,9 @@ public class Robot extends TimedRobot {
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
-	
+	SendableChooser<String> startPlace = new SendableChooser<>();
+	SendableChooser<String> plate = new SendableChooser<>();
+	Command selectedAuto;
 	
 
 	/**
@@ -56,7 +63,17 @@ public class Robot extends TimedRobot {
 		lift = new Lift();
 		intake = new Intake();
 
-		m_chooser.addDefault("MoveLiftToSwitchHeight", new CenterLeftSwitch());
+		m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
+		
+		startPlace.addObject("Left", "left");
+		startPlace.addObject("Right", "right");
+		startPlace.addObject("Center", "center");
+		
+		plate.addDefault("None", "none");
+		plate.addObject("Switch", "switch");
+		plate.addObject("scale", "scale");
+		
+		
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
@@ -89,7 +106,53 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		//m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
-		m_autonomousCommand = m_chooser.getSelected();
+
+//		m_autonomousCommand = m_chooser.getSelected();
+		
+		String gameData;
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		if(gameData.length() > 0){
+			if (plate.getSelected() == "switch"){
+				if (startPlace.getSelected() == "right"){
+					if(gameData.charAt(0) == 'L'){
+						selectedAuto = new RightFarSwitch();
+					}else if(gameData.charAt(0) == 'R'){
+						selectedAuto = new RightCloseSwitch();
+					}
+				}else if (startPlace.getSelected() == "left"){
+					if(gameData.charAt(0) == 'L'){
+						selectedAuto = new LeftCloseSwitch();
+					}else if(gameData.charAt(0) == 'R'){
+						selectedAuto = new LeftFarSwitch();
+					}
+				}else if (startPlace.getSelected() == "center"){
+					if(gameData.charAt(0) == 'L'){
+						selectedAuto = new CenterLeftSwitch();
+					}else if(gameData.charAt(0) == 'R'){
+						selectedAuto = new CenterRightSwitch();
+					}
+				}
+			}else if (plate.getSelected() == "scale"){
+				if (startPlace.getSelected() == "right"){
+					if(gameData.charAt(1) == 'L'){
+						selectedAuto = new RightFarScale();
+					}else if(gameData.charAt(1) == 'R'){
+						selectedAuto = new RightCloseScale();
+					}
+				}else if (startPlace.getSelected() == "left"){
+					if(gameData.charAt(1) == 'L'){
+						selectedAuto = new LeftCloseScale();
+					}else if(gameData.charAt(1) == 'R'){
+						selectedAuto = new LeftFarScale();
+					}
+				}else{
+					selectedAuto = new DriveForwardAuto();
+				}
+			}else{
+				selectedAuto = new DriveForwardAuto();
+			}
+		}
+		m_autonomousCommand = selectedAuto;
 		Robot.driveTrain.resetCounters();
 		Robot.lift.enable();
 

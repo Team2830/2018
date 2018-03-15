@@ -71,9 +71,18 @@ public class Lift extends PIDSubsystem {
 /**
  *  TODO Change factor to max speed (units/20ms)	
  */
-    	double newSetPoint = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(-newSetPoint);
+    	
+    	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	if (controllerInput > 0){
+    		set(-controllerInput);
+    	}
+    	else{
+    		double newSetPoint = liftEncoder.getDistance();
+    		moveToSetPoint(newSetPoint);
+    	}
     }
+    
+    
     
     public void moveToSetPoint(double setPoint){
     	Robot.lift.setSetpoint(setPoint);
@@ -100,35 +109,6 @@ public class Lift extends PIDSubsystem {
     	return true;
     }
     
-    public double getLiftSetHeight(int index){	
-    	
-    	switch (index){
-    	
-    	case 0: liftGoal = 0;
-    	break;
-
-    	case 1: liftGoal = switchHeight;
-    	break;
-
-    	case 2: liftGoal = lowScaleHeight;
-    	break;
-
-    	case 3: liftGoal = midScaleHeight;
-    	break;
-
-    	case 4: liftGoal = tallScaleHeight;
-    	break;
-    	}
-    	return liftGoal;
-    }
-    public double setHeightIndex(Joystick operatorStick){
-    	if (operatorStick.getPOV() == 0 && liftHeightIndex < 4){
-    		liftHeightIndex += 1;
-    	}else if (operatorStick.getPOV() == 180 && liftHeightIndex > 0){
-    		liftHeightIndex -= 1;
-    	}
-    	return getLiftSetHeight(liftHeightIndex);
-    }
     
 	@Override
 	protected double returnPIDInput() {

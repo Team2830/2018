@@ -111,7 +111,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
-SmartDashboard.putNumber("Steering", steering);
+			SmartDashboard.putNumber("Steering", steering);
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
 			if (throttle >= 0){
 				if(steering >= 0){
