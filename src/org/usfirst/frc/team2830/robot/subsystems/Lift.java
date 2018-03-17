@@ -73,13 +73,12 @@ public class Lift extends PIDSubsystem {
  */
     	
     	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	if (controllerInput > 0){
-    		set(-controllerInput);
-    	}
-    	else{
-    		double newSetPoint = liftEncoder.getDistance();
-    		moveToSetPoint(newSetPoint);
-    	}
+    	set(-controllerInput);
+    		
+//    	else{
+//    		double newSetPoint = liftEncoder.getDistance();
+//    		moveToSetPoint(newSetPoint);
+//    	}
     }
     
     

@@ -18,9 +18,13 @@ public class Intake extends Subsystem {
     	setDefaultCommand(new OperateIntake());
     }
     
-    public void intakeIn(){
+    public void intakeInLeft(){
     	RobotMap.intakeLeft.set(.8);
     	RobotMap.intakeRight.set(.4);
+    }
+    public void intakeInRight(){
+    	RobotMap.intakeLeft.set(.4);
+    	RobotMap.intakeRight.set(.8);
     }
     public void intakeOut(){ 
     	RobotMap.intakeLeft.set(-.5);
@@ -36,7 +40,9 @@ public class Intake extends Subsystem {
      */
     public void operateIntake(Joystick operatorStick){
     	if(operatorStick.getRawButton(1)){
-    		intakeIn();
+    		intakeInLeft();
+    	}else if(operatorStick.getRawButton(3)){
+    		intakeInRight();
     	}else if(operatorStick.getRawButton(2)){
     		intakeOut();
     	}else{

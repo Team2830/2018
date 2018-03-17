@@ -21,10 +21,8 @@ public class OperateLift extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if (Math.abs(Robot.oi.getOperatorJoystick().getRawAxis(1)) > .2){
-    		Robot.lift.operateLift(Robot.oi.getOperatorJoystick());
-    		Robot.lift.writeToSmartDashboard();
-    	}
+    	Robot.lift.operateLift(Robot.oi.getOperatorJoystick());
+    	Robot.lift.writeToSmartDashboard();
     }
 
     // Make this return true when this Command no longer needs to run execute()
