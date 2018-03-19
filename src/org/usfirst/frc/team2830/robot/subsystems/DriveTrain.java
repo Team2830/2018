@@ -111,6 +111,11 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
+			
+			if (Math.abs(throttle) > .7){
+				throttle = Math.copySign(.7, throttle);
+			}
+			
 			SmartDashboard.putNumber("Steering", steering);
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
 			if (throttle >= 0){
@@ -140,7 +145,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * @param input Controller input value.
 	 * @param deadband Lower threshold for controller input value.
 	 * @return Returns input if the controller input is greater than the deadband.
-	 * Otherwise returns the deadband.
+	 * Otherwise returns the 0.
 	 */
 	public double deadbanded(double input, double deadband){
 		if(Math.abs(input)>Math.abs(deadband)){

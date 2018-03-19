@@ -38,12 +38,12 @@ public class Intake extends Subsystem {
      * Checks if certain buttons are pressed and calls methods accordingly.
      * @param operatorStick The joystick on which the checks will be enacted.
      */
-    public void operateIntake(Joystick operatorStick){
+    public void operateIntake(Joystick operatorStick, Joystick driverStick){
     	if(operatorStick.getRawButton(1)){
     		intakeInLeft();
     	}else if(operatorStick.getRawButton(3)){
     		intakeInRight();
-    	}else if(operatorStick.getRawButton(2)){
+    	}else if(operatorStick.getRawButton(2) || driverStick.getRawButton(2)){
     		intakeOut();
     	}else{
     		stopIntake();
