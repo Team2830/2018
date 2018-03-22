@@ -7,25 +7,30 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeIn extends Command {
-	int checkLoop = 0;
-    public IntakeIn() {
+public class IntakeInRight extends Command {
+	int checkLoop;
+    public IntakeInRight() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	checkLoop = 0;
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.intake.intakeOut();
+    	if(checkLoop>70 && checkLoop<75){
+    		Robot.intake.stopIntake();
+    	}else{
+    		Robot.intake.intakeInRight();
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(++checkLoop>50){
+    	if(++checkLoop>100){
     		return true;
     	}
         return false;

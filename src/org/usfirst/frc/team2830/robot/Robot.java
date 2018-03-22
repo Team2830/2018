@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 	SendableChooser<String> startPlace = new SendableChooser<>();
 	SendableChooser<String> plate = new SendableChooser<>();
+	SendableChooser<Boolean> crossCenter = new SendableChooser<>();
 	Command selectedAuto;
 	
 
@@ -64,6 +65,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+
 		RobotMap.init();
 		oi = new OI();
 		lift = new Lift();
@@ -107,15 +109,24 @@ public class Robot extends TimedRobot {
 		
 		m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		
-		startPlace.addObject("Left", "left");
-		startPlace.addObject("Right", "right");
-		startPlace.addObject("Center", "center");
+		startPlace.setName("Start Place");
+		startPlace.addObject("left", "left");
+		startPlace.addObject("right", "right");
+		startPlace.addObject("center", "center");
 		
-		plate.addDefault("None", "none");
-		plate.addObject("Switch", "switch");
+		plate.setName("Plate Selection");
+		plate.addDefault("none", "none");
+		plate.addObject("switch", "switch");
 		plate.addObject("scale", "scale");
 		
-		SmartDashboard.putData("Auto mode", m_chooser);
+		crossCenter.setName("Cross?");
+		crossCenter.addDefault("Yes", true);
+		crossCenter.addObject("No", false);
+		
+		SmartDashboard.putData(startPlace.getName(), startPlace);
+		SmartDashboard.putData(plate.getName(), plate);
+		SmartDashboard.putData(crossCenter.getName(), crossCenter);
+		//SmartDashboard.putData("Auto mode", m_chooser);
 		
 		
 	}
@@ -127,6 +138,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
+		driveTrain.disablePID();
+		lift.disable();
+		
 
 	}
 
@@ -157,16 +171,20 @@ public class Robot extends TimedRobot {
 		if(gameData.length() > 0){
 			if (plate.getSelected() == "switch"){
 				if (startPlace.getSelected() == "right"){
-					if(gameData.charAt(0) == 'L'){
+					if(gameData.charAt(0) == 'L' && crossCenter.getSelected()){
 						selectedAuto = new RightFarSwitch();
 					}else if(gameData.charAt(0) == 'R'){
 						selectedAuto = new RightCloseSwitch();
+					}else{
+						selectedAuto = new DriveForwardAuto();
 					}
 				}else if (startPlace.getSelected() == "left"){
 					if(gameData.charAt(0) == 'L'){
 						selectedAuto = new LeftCloseSwitch();
-					}else if(gameData.charAt(0) == 'R'){
+					}else if(gameData.charAt(0) == 'R' && crossCenter.getSelected()){
 						selectedAuto = new LeftFarSwitch();
+					}else{
+						selectedAuto = new DriveForwardAuto();
 					}
 				}else if (startPlace.getSelected() == "center"){
 					if(gameData.charAt(0) == 'L'){
@@ -177,25 +195,42 @@ public class Robot extends TimedRobot {
 				}
 			}else if (plate.getSelected() == "scale"){
 				if (startPlace.getSelected() == "right"){
-					if(gameData.charAt(1) == 'L'){
+					if(gameData.charAt(1) == 'L' && crossCenter.getSelected()){
 						selectedAuto = new RightFarScale();
 					}else if(gameData.charAt(1) == 'R'){
 						selectedAuto = new RightCloseScale();
+					}else{
+						if (gameData.charAt(0) == 'R'){
+							selectedAuto = new RightCloseSwitch();
+						}else{
+							selectedAuto = new DriveForwardAuto();
+						}
 					}
 				}else if (startPlace.getSelected() == "left"){
 					if(gameData.charAt(1) == 'L'){
 						selectedAuto = new LeftCloseScale();
-					}else if(gameData.charAt(1) == 'R'){
+					}else if(gameData.charAt(1) == 'R' && crossCenter.getSelected()){
 						selectedAuto = new LeftFarScale();
+					}else{
+						if (gameData.charAt(0) == 'L'){
+							selectedAuto = new LeftCloseSwitch();
+						}else{
+							selectedAuto = new DriveForwardAuto();
+						}
 					}
 				}else{
-					selectedAuto = new DriveForwardAuto();
+					if(gameData.charAt(0) == 'L'){
+						selectedAuto = new CenterLeftSwitch();
+					}else{
+						selectedAuto = new CenterRightSwitch();
+					}
 				}
 			}else{
 				selectedAuto = new DriveForwardAuto();
 			}
 		}
 		m_autonomousCommand = selectedAuto;
+		SmartDashboard.putString("Chosen Auto", selectedAuto.getName());
 		Robot.driveTrain.resetCounters();
 		Robot.lift.enable();
 
@@ -227,7 +262,8 @@ public class Robot extends TimedRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		Robot.lift.disable();
+//		Robot.lift.disable();
+		Robot.lift.updateOutputRange(-.6, .6);
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}

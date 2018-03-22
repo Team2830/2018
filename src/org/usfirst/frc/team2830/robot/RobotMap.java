@@ -33,7 +33,7 @@ public class RobotMap {
 	public static DifferentialDrive robotDrive;
 	
 	
-	public static AHRS ahrs;
+	//public static AHRS ahrs;
 	public static Encoder liftEncoder;
 	
 	public static SpeedController intakeLeft;

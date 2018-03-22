@@ -16,6 +16,9 @@ public class Lift extends PIDSubsystem {
 	static double kI = .00001;
 	static double kD = 0;
 	
+	double lastCycle = RobotMap.liftEncoder.getDistance();
+	double maxCycleDifference = 0;
+	
     public Lift() {
 		super(kP, kI, kD);
     	liftEncoder = RobotMap.liftEncoder;
@@ -26,7 +29,7 @@ public class Lift extends PIDSubsystem {
 	}
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
-	public double joystickDeadband = .05;
+	public double joystickDeadband = .2;
 	private Encoder liftEncoder;
 	public int liftHeightIndex = 1;
 	public double liftGoal;
@@ -71,10 +74,23 @@ public class Lift extends PIDSubsystem {
 /**
  *  TODO Change factor to max speed (units/20ms)	
  */
+//    	if(Math.abs(liftEncoder.getDistance()-lastCycle) > maxCycleDifference ){
+//    		maxCycleDifference = Math.abs(liftEncoder.getDistance()-lastCycle);
+//    	}
+    	double newSetPoint;
+    	if(deadbanded(operatorStick.getRawAxis(1), joystickDeadband)<0){
+    		newSetPoint = getSetpoint()-31*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	}else{
+    		newSetPoint = getSetpoint()-29*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	}
+    	moveToSetPoint(newSetPoint);
     	
-    	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(-controllerInput);
-    		
+//    	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+//    	set(-controllerInput);
+    	
+//    	lastCycle = liftEncoder.getDistance();
+//    	SmartDashboard.putNumber("Max Lift Speed", maxCycleDifference);
+    	
 //    	else{
 //    		double newSetPoint = liftEncoder.getDistance();
 //    		moveToSetPoint(newSetPoint);
@@ -86,7 +102,6 @@ public class Lift extends PIDSubsystem {
     public void moveToSetPoint(double setPoint){
     	Robot.lift.setSetpoint(setPoint);
     }
-
     
     public double deadbanded(double input, double deadband){
     	if (Math.abs(input) > Math.abs(deadband)){
@@ -108,6 +123,9 @@ public class Lift extends PIDSubsystem {
     	return true;
     }
     
+    public void updateOutputRange(double lower, double upper){
+    	setOutputRange(lower, upper);
+    }
     
 	@Override
 	protected double returnPIDInput() {

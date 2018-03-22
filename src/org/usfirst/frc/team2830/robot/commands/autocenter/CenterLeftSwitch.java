@@ -3,6 +3,7 @@ package org.usfirst.frc.team2830.robot.commands.autocenter;
 import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.commands.DriveBackwards;
 import org.usfirst.frc.team2830.robot.commands.DriveDistance;
+import org.usfirst.frc.team2830.robot.commands.IntakeInRight;
 import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.Turn;
@@ -34,13 +35,18 @@ public class CenterLeftSwitch extends CommandGroup {
     	
     	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
     	addSequential(new DriveDistance(15));
-    	addSequential(new Turn(-47));
-    	addSequential(new DriveDistance(4.5*12));
+    	addSequential(new Turn(-50));
+    	addSequential(new DriveDistance(4.8*12));
     	addSequential(new Turn(47));
     	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight));
     	addSequential(new DriveDistance(15));
     	addSequential(new IntakeOut());
-    	addSequential(new DriveBackwards(12*2));
+    	addSequential(new DriveBackwards(12*3.5));
     	addSequential(new MoveLiftToSetPoint(0));
+    	
+    	addSequential(new Turn(45));
+    	addParallel(new DriveDistance(30));
+    	addSequential(new IntakeInRight());
+    	addSequential(new DriveBackwards(24));
     }
 }

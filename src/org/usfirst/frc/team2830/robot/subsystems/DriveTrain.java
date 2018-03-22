@@ -13,6 +13,7 @@ import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -32,7 +33,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
-
 	int drivingStraightCycleCount = 0;
 
 	PIDController turnController;
@@ -60,7 +60,15 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	AHRS navx;
 
 	public DriveTrain(){
+		try{
 		navx = new AHRS(SerialPort.Port.kUSB1);
+		}
+		catch(RuntimeException ex){
+			DriverStation.reportError("Error instantiating navX-MXP: "+ ex.getMessage(), true);
+		}
+		while (navx == null){
+			System.out.println("Navx still null");
+		}
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
 		turnController.setOutputRange(-.5, .5);
