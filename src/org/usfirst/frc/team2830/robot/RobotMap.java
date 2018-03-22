@@ -119,7 +119,7 @@ public class RobotMap {
 		
 
 
-		liftEncoder = new Encoder(0, 1, false);
+		liftEncoder = new Encoder(0, 1, true);
 		
 
 //		robotDrive.setExpiration(0.1);
@@ -133,9 +133,9 @@ public class RobotMap {
 		
 		
 		liftLeft = new Spark(2);
-		liftLeft.setInverted(true);
+		liftLeft.setInverted(false);
 		liftRight = new Spark(3);
-		liftRight.setInverted(true);
+		liftRight.setInverted(false);
 	}
 	
 }
