@@ -38,7 +38,7 @@ public class Lift extends PIDSubsystem {
 	public int liftHeightIndex = 1;
 	public double liftGoal;
 	
-	public final double switchHeight = 2000;
+	public final double switchHeight = 2500;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
 	public final double tallScaleHeight = 4480; //3360
@@ -85,7 +85,7 @@ public class Lift extends PIDSubsystem {
     	if(deadbanded(operatorStick.getRawAxis(1), joystickDeadband)<0){
     		newSetPoint = getSetpoint()-31*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	}else{
-    		newSetPoint = getSetpoint()-35*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    		newSetPoint = getSetpoint()-33*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	}
     	moveToSetPoint(newSetPoint);
     	SmartDashboard.putNumber("Lift Setpoint", getSetpoint());
