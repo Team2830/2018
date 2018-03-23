@@ -43,8 +43,7 @@ import org.usfirst.frc.team2830.robot.subsystems.Lift;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final DriveTrain driveTrain
-			= new DriveTrain();
+	public static DriveTrain driveTrain;
 	public static OI oi;
 	public static Lift lift;
 	public static Intake intake;
@@ -52,7 +51,6 @@ public class Robot extends TimedRobot {
 	Thread t;
 	
 	Command m_autonomousCommand;
-	SendableChooser<Command> m_chooser = new SendableChooser<>();
 	SendableChooser<String> startPlace = new SendableChooser<>();
 	SendableChooser<String> plate = new SendableChooser<>();
 	SendableChooser<Boolean> crossCenter = new SendableChooser<>();
@@ -67,47 +65,48 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 
 		RobotMap.init();
-		oi = new OI();
+		driveTrain = new DriveTrain();
 		lift = new Lift();
 		intake = new Intake();
+		oi = new OI();
 		
 		t = new Thread(() -> {
 			// Get the UsbCamera from CameraServer
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 			// Set the resolution
 			camera.setResolution(640, 480);
-
-			// Get a CvSink. This will capture Mats from the camera
-			CvSink cvSink = CameraServer.getInstance().getVideo();
-			// Setup a CvSource. This will send images back to the Dashboard
-			CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 640, 480);
-
-			// Mats are very memory expensive. Lets reuse this Mat.
-			Mat mat = new Mat();
-
-			// This cannot be 'true'. The program will never exit if it is. This
-			// lets the robot stop this thread when restarting robot code or
-			// deploying.
-			while (!Thread.interrupted()) {
-				// Tell the CvSink to grab a frame from the camera and put it
-				// in the source mat.  If there is an error notify the output.
-				if (cvSink.grabFrame(mat) == 0) {
-					// Send the output the error.
-					outputStream.notifyError(cvSink.getError());
-					// skip the rest of the current iteration
-					continue;
-				}
-				// Put a rectangle on the image
-				//	Imgproc.rectangle(mat, new Point(100, 100), new Point(400, 400),
-				//		new Scalar(255, 255, 255), 5);
-				// Give the output stream a new image to display
-				outputStream.putFrame(mat);
-			}
+			camera.setFPS(20);
+//
+//			// Get a CvSink. This will capture Mats from the camera
+//			CvSink cvSink = CameraServer.getInstance().getVideo();
+//			// Setup a CvSource. This will send images back to the Dashboard
+//			CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 320, 240);
+////			CameraServer.getInstance().
+//
+//			// Mats are very memory expensive. Lets reuse this Mat.
+//			Mat mat = new Mat();
+//
+//			// This cannot be 'true'. The program will never exit if it is. This
+//			// lets the robot stop this thread when restarting robot code or
+//			// deploying.
+//			while (!Thread.interrupted()) {
+//				// Tell the CvSink to grab a frame from the camera and put it
+//				// in the source mat.  If there is an error notify the output.
+//				if (cvSink.grabFrame(mat) == 0) {
+//					// Send the output the error.
+//					outputStream.notifyError(cvSink.getError());
+//					// skip the rest of the current iteration
+//					continue;
+//				}
+//				// Put a rectangle on the image
+//				//	Imgproc.rectangle(mat, new Point(100, 100), new Point(400, 400),
+//				//		new Scalar(255, 255, 255), 5);
+//				// Give the output stream a new image to display
+//				outputStream.putFrame(mat);
+//			}
 		});
 		t.setDaemon(true);
 		t.start();
-		
-		m_chooser.addDefault("Drive Forward", new DriveForwardAuto());
 		
 		startPlace.setName("Start Place");
 		startPlace.addObject("left", "left");
@@ -125,10 +124,7 @@ public class Robot extends TimedRobot {
 		
 		SmartDashboard.putData(startPlace.getName(), startPlace);
 		SmartDashboard.putData(plate.getName(), plate);
-		SmartDashboard.putData(crossCenter.getName(), crossCenter);
-		//SmartDashboard.putData("Auto mode", m_chooser);
-		
-		
+		SmartDashboard.putData(crossCenter.getName(), crossCenter);		
 	}
 
 	/**
@@ -140,8 +136,6 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		driveTrain.disablePID();
 		lift.disable();
-		
-
 	}
 
 	@Override
@@ -262,7 +256,9 @@ public class Robot extends TimedRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-//		Robot.lift.disable();
+		//Robot.lift.disable();
+		//Robot.lift.setSetpoint(0);
+		Robot.lift.enable();
 		Robot.lift.updateOutputRange(-.6, .6);
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

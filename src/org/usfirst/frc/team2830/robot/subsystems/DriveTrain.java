@@ -56,12 +56,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	/* PID Controller will attempt to get.                             */
 
 	static final double kToleranceDegrees = 2.0f;
-
+ 
 	AHRS navx;
 
 	public DriveTrain(){
 		try{
-		navx = new AHRS(SerialPort.Port.kUSB1);
+			navx = new AHRS(SerialPort.Port.kUSB1);
 		}
 		catch(RuntimeException ex){
 			DriverStation.reportError("Error instantiating navX-MXP: "+ ex.getMessage(), true);

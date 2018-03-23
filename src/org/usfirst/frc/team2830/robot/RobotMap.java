@@ -10,11 +10,7 @@ package org.usfirst.frc.team2830.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -119,8 +115,8 @@ public class RobotMap {
 		
 
 
-		liftEncoder = new Encoder(0, 1, true);
-		
+		liftEncoder = new Encoder(0, 1, false);
+//		liftEncoder.setDistancePerPulse(360/250);
 
 //		robotDrive.setExpiration(0.1);
 //		robotDrive.setSafetyEnabled(true);
@@ -133,9 +129,9 @@ public class RobotMap {
 		
 		
 		liftLeft = new Spark(2);
-		liftLeft.setInverted(false);
+		liftLeft.setInverted(true);
 		liftRight = new Spark(3);
-		liftRight.setInverted(false);
+		liftRight.setInverted(true);
 	}
 	
 }

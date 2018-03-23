@@ -12,7 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class Lift extends PIDSubsystem {
-	static double kP = .02;
+//	static double kP = .02;
+//	static double kI = .00001;
+//	static double kD = 0;
+	
+	static double kP = .018;
 	static double kI = .00001;
 	static double kD = 0;
 	
@@ -29,15 +33,15 @@ public class Lift extends PIDSubsystem {
 	}
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
-	public double joystickDeadband = .2;
+	public double joystickDeadband = .1;
 	private Encoder liftEncoder;
 	public int liftHeightIndex = 1;
 	public double liftGoal;
 	
-	public final double switchHeight = 1500;
+	public final double switchHeight = 2000;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
-	public final double tallScaleHeight = 3360;
+	public final double tallScaleHeight = 4480; //3360
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -81,10 +85,10 @@ public class Lift extends PIDSubsystem {
     	if(deadbanded(operatorStick.getRawAxis(1), joystickDeadband)<0){
     		newSetPoint = getSetpoint()-31*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	}else{
-    		newSetPoint = getSetpoint()-29*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    		newSetPoint = getSetpoint()-35*deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
     	}
     	moveToSetPoint(newSetPoint);
-    	
+    	SmartDashboard.putNumber("Lift Setpoint", getSetpoint());
 //    	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
 //    	set(-controllerInput);
     	
@@ -96,7 +100,11 @@ public class Lift extends PIDSubsystem {
 //    		moveToSetPoint(newSetPoint);
 //    	}
     }
-    
+    public void manualOperateLift(Joystick operatorStick){
+    	//disable();
+    	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
+    	set(-controllerInput);
+    }
     
     
     public void moveToSetPoint(double setPoint){
