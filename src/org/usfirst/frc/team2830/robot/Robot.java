@@ -119,8 +119,8 @@ public class Robot extends TimedRobot {
 		plate.addObject("scale", "scale");
 		
 		crossCenter.setName("Cross?");
-		crossCenter.addDefault("Yes", true);
-		crossCenter.addObject("No", false);
+		crossCenter.addDefault("No", true);
+		crossCenter.addObject("Yes", false);
 		
 		SmartDashboard.putData(startPlace.getName(), startPlace);
 		SmartDashboard.putData(plate.getName(), plate);
@@ -259,7 +259,7 @@ public class Robot extends TimedRobot {
 		//Robot.lift.disable();
 		//Robot.lift.setSetpoint(0);
 		Robot.lift.disable();
-		Robot.lift.updateOutputRange(-.6, .6);
+		//Robot.lift.updateOutputRange(-.6, .6);
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}

@@ -30,7 +30,7 @@ public class LeftFarSwitch extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new DriveDistance(12*19));
+    	addSequential(new DriveDistance(12*17));
     	addSequential(new Turn(90));
     	addSequential(new DriveDistance(12*12));
     	addSequential(new Turn(90));

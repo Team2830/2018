@@ -296,4 +296,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			RobotMap.talonRight.set(0);
 		}
 	}
+	public double getAccelerationX(){
+		return navx.getWorldLinearAccelX();
+	}
+	public double getAccelerationY(){
+		return navx.getWorldLinearAccelY();
+	}
 }
