@@ -34,17 +34,23 @@ public class Intake extends Subsystem {
     	RobotMap.intakeLeft.stopMotor();
     	RobotMap.intakeRight.stopMotor();
     }
+    public void intakeOutSlow(){
+    	RobotMap.intakeLeft.set(-.4);
+    	RobotMap.intakeRight.set(-.4);
+    }
     /**
      * Checks if certain buttons are pressed and calls methods accordingly.
      * @param operatorStick The joystick on which the checks will be enacted.
      */
     public void operateIntake(Joystick operatorStick, Joystick driverStick){
-    	if(operatorStick.getRawButton(1)){
+    	if(operatorStick.getRawButton(4) || driverStick.getRawButton(4)){
+    		intakeOutSlow();
+    	}else if(operatorStick.getRawButton(2) || driverStick.getRawButton(2)){
+    		intakeOut();
+    	}else if(operatorStick.getRawButton(1)){
     		intakeInLeft();
     	}else if(operatorStick.getRawButton(3)){
     		intakeInRight();
-    	}else if(operatorStick.getRawButton(2) || driverStick.getRawButton(2)){
-    		intakeOut();
     	}else{
     		stopIntake();
     	}

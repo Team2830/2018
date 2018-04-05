@@ -64,7 +64,7 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			navx = new AHRS(SerialPort.Port.kUSB1);
 		}
 		catch(RuntimeException ex){
-			DriverStation.reportError("Error instantiating navX-MXP: "+ ex.getMessage(), true);
+			DriverStation.reportError("Error ins\tantiating navX-MXP: "+ ex.getMessage(), true);
 		}
 		while (navx == null){
 			System.out.println("Navx still null");
@@ -120,8 +120,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 			
-			if (Math.abs(throttle) > .7){
-				throttle = Math.copySign(.7, throttle);
+			if (Math.abs(throttle) > .8){
+				throttle = Math.copySign(.8, throttle);
 			}
 			
 			SmartDashboard.putNumber("Steering", steering);

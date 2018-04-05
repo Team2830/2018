@@ -45,8 +45,8 @@ public class Lift extends PIDSubsystem {
 	public final double midScaleHeight = 7*1440;
 	public final double tallScaleHeight = 4480; //3360
 	
-	DigitalInput upperLimitSwitch = new DigitalInput(1);
-    DigitalInput lowerLimitSwitch = new DigitalInput(2);
+	//DigitalInput upperLimitSwitch = new DigitalInput(1);
+    //DigitalInput lowerLimitSwitch = new DigitalInput(2);
     
     private final double maxLiftHeight = 999999999;
 
@@ -151,20 +151,20 @@ public class Lift extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		SmartDashboard.putNumber("PID output", output);
 		writeToSmartDashboard();
-		set(limitSwitch(output));
+		set(output); //limitSwitch(output));
 	}
 	
-	private double limitSwitch(double output){
-		 if (upperLimitSwitch.get() || this.getLiftEncoderDistance() > maxLiftHeight){
-			 output = Math.min(output, 0);  // If the forward limit switch is pressed, we want to keep the values between -1 and 0
-		 }
-	     else if(lowerLimitSwitch.get()){
-	    	 liftEncoder.reset();
-	    	 output = Math.max(output, 0); // If the reversed limit switch is pressed, we want to keep the values between 0 and 1
-	     }
-		 
-		 return output;
-	}
+//	private double limitSwitch(double output){
+//		 if (upperLimitSwitch.get() || this.getLiftEncoderDistance() > maxLiftHeight){
+//			 output = Math.min(output, 0);  // If the forward limit switch is pressed, we want to keep the values between -1 and 0
+//		 }
+//	     else if(lowerLimitSwitch.get()){
+//	    	 liftEncoder.reset();
+//	    	 output = Math.max(output, 0); // If the reversed limit switch is pressed, we want to keep the values between 0 and 1
+//	     }
+//		 
+//		 return output;
+//	}
 	
 }
 

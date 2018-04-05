@@ -31,7 +31,7 @@ public class LeftCloseScale extends CommandGroup {
         // a CommandGroup containing them would require both the chassis and the
         // arm.
     	addParallel(new MoveLiftToSetPoint(1000));
-    	addSequential(new DriveDistance(12*19));
+    	addSequential(new DriveDistance(12*16));
     	addSequential(new Turn(45));
     	addSequential(new DriveDistance(5));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.tallScaleHeight));
