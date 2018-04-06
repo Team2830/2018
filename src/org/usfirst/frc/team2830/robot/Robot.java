@@ -7,8 +7,6 @@
 
 package org.usfirst.frc.team2830.robot;
 
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,7 +16,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.opencv.core.Mat;
 import org.usfirst.frc.team2830.robot.commands.DriveForwardAuto;
 import org.usfirst.frc.team2830.robot.commands.autocenter.CenterLeftSwitch;
 import org.usfirst.frc.team2830.robot.commands.autocenter.CenterRightSwitch;
@@ -48,14 +45,13 @@ public class Robot extends TimedRobot {
 	public static Lift lift;
 	public static Intake intake;
 	
-	Thread t;
 	
 	Command m_autonomousCommand;
 	SendableChooser<String> startPlace = new SendableChooser<>();
 	SendableChooser<String> plate = new SendableChooser<>();
 	SendableChooser<Boolean> crossCenter = new SendableChooser<>();
 	Command selectedAuto;
-	
+	UsbCamera camera;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -70,43 +66,12 @@ public class Robot extends TimedRobot {
 		intake = new Intake();
 		oi = new OI();
 		
-		t = new Thread(() -> {
-			// Get the UsbCamera from CameraServer
-			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-			// Set the resolution
-			camera.setResolution(320, 240);
-			camera.setFPS(15);
-//
-//			// Get a CvSink. This will capture Mats from the camera
-//			CvSink cvSink = CameraServer.getInstance().getVideo();
-//			// Setup a CvSource. This will send images back to the Dashboard
-//			CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 320, 240);
-////			CameraServer.getInstance().
-//
-//			// Mats are very memory expensive. Lets reuse this Mat.
-//			Mat mat = new Mat();
-//
-//			// This cannot be 'true'. The program will never exit if it is. This
-//			// lets the robot stop this thread when restarting robot code or
-//			// deploying.
-//			while (!Thread.interrupted()) {
-//				// Tell the CvSink to grab a frame from the camera and put it
-//				// in the source mat.  If there is an error notify the output.
-//				if (cvSink.grabFrame(mat) == 0) {
-//					// Send the output the error.
-//					outputStream.notifyError(cvSink.getError());
-//					// skip the rest of the current iteration
-//					continue;
-//				}
-//				// Put a rectangle on the image
-//				//	Imgproc.rectangle(mat, new Point(100, 100), new Point(400, 400),
-//				//		new Scalar(255, 255, 255), 5);
-//				// Give the output stream a new image to display
-//				outputStream.putFrame(mat);
-//			}
-		});
-		t.setDaemon(true);
-		t.start();
+
+		// Get the UsbCamera from CameraServer
+		camera = CameraServer.getInstance().startAutomaticCapture();
+		// Set the resolution
+		camera.setResolution(320, 240);
+		camera.setFPS(15);
 		
 		startPlace.setName("Start Place");
 		startPlace.addObject("left", "left");

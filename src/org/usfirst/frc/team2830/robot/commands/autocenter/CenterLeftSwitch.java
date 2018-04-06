@@ -38,7 +38,7 @@ public class CenterLeftSwitch extends CommandGroup {
     	addSequential(new Turn(-50));
     	addSequential(new DriveDistance(4.8*12));
     	addSequential(new Turn(47));
-    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight));
+    	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
     	addSequential(new DriveDistance(12));
     	addSequential(new IntakeOut());
     	addSequential(new DriveBackwards(12*3.5));

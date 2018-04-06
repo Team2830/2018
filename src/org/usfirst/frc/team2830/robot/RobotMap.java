@@ -123,9 +123,9 @@ public class RobotMap {
 //		robotDrive.setMaxOutput(1.0);
 		
 		intakeLeft = new Spark(0);
-		intakeLeft.setInverted(true);
+		intakeLeft.setInverted(false);
 		intakeRight = new Spark(1);
-		intakeRight.setInverted(false);
+		intakeRight.setInverted(true);
 		
 		
 		liftLeft = new Spark(2);

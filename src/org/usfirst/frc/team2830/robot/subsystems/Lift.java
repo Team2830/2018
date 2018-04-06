@@ -32,6 +32,9 @@ public class Lift extends PIDSubsystem {
 		this.setOutputRange(-.9, .9);
 		setSetpoint(0);
 		enable();
+		lowerLimitSwitch = new DigitalInput(2);
+		upperLimitSwitch = new DigitalInput(3);
+		
 	}
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -43,10 +46,10 @@ public class Lift extends PIDSubsystem {
 	public final double switchHeight = 2500;
 	public final double lowScaleHeight = 5*1440;
 	public final double midScaleHeight = 7*1440;
-	public final double tallScaleHeight = 4480; //3360
+	public final double tallScaleHeight = 4000; //3360
 	
-	//DigitalInput upperLimitSwitch = new DigitalInput(1);
-    //DigitalInput lowerLimitSwitch = new DigitalInput(2);
+	DigitalInput upperLimitSwitch;
+    DigitalInput lowerLimitSwitch;
     
     private final double maxLiftHeight = 999999999;
 
@@ -74,6 +77,8 @@ public class Lift extends PIDSubsystem {
 		SmartDashboard.putNumber("Lift Encoder",getLiftEncoderDistance());
 		SmartDashboard.putNumber("LIFT PID Position", this.getPosition());
 		SmartDashboard.putNumber("LIFT PID Error", this.getSetpoint()-this.getPosition());
+		SmartDashboard.putBoolean("Upper Limit Switch", upperLimitSwitch.get());
+		SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.get());
 	}
 	
     /**
@@ -110,7 +115,7 @@ public class Lift extends PIDSubsystem {
     public void manualOperateLift(Joystick operatorStick){
     	//disable();
     	double controllerInput = deadbanded(operatorStick.getRawAxis(1), joystickDeadband);
-    	set(-controllerInput); //limitSwitch(-controllerInput));
+    	set(limitSwitch(-controllerInput));
     }
     
     
@@ -151,21 +156,26 @@ public class Lift extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		SmartDashboard.putNumber("PID output", output);
 		writeToSmartDashboard();
-		set(output); //limitSwitch(output));
+		set(limitSwitch(output));
 	}
 	
-//	private double limitSwitch(double output){
-//		 if (upperLimitSwitch.get() || this.getLiftEncoderDistance() > maxLiftHeight){
-//			 output = Math.min(output, 0);  // If the forward limit switch is pressed, we want to keep the values between -1 and 0
-//		 }
-//	     else if(lowerLimitSwitch.get()){
-//	    	 liftEncoder.reset();
-//	    	 output = Math.max(output, 0); // If the reversed limit switch is pressed, we want to keep the values between 0 and 1
-//	     }
-//		 
-//		 return output;
-//	}
-	
+	private double limitSwitch(double output){
+		 if (!upperLimitSwitch.get() || this.getLiftEncoderDistance() > maxLiftHeight){
+			 output = Math.min(output, 0);  // If the forward limit switch is pressed, we want to keep the values between -1 and 0
+		 }
+	     else if(!lowerLimitSwitch.get()){
+	    	 liftEncoder.reset();
+	    	 output = Math.max(output, 0); // If the reversed limit switch is pressed, we want to keep the values between 0 and 1
+	     }
+		 
+		 return output;
+	}
+	public boolean isUpperLimitHit(){
+		return ! upperLimitSwitch.get();
+	}
+	public boolean isLowerLimitHit(){
+		return ! lowerLimitSwitch.get();
+	}
 }
 
 

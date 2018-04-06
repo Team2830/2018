@@ -302,4 +302,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public double getAccelerationY(){
 		return navx.getWorldLinearAccelY();
 	}
+	public boolean collided(){
+		return true;
+		//if(navx.getWorldLinearAccelX() < -)
+	}
 }
