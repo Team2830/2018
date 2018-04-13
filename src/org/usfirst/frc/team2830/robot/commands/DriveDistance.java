@@ -81,6 +81,9 @@ public class DriveDistance extends Command {
        		v=vMin+((m_speed-vMin)/xRamp)*x;
        	else
       		v=m_speed;
+       	if(m_distance <= 15){
+       		v = .5;
+       	}
        	SmartDashboard.putNumber("Ramp Velocity", v);
        	SmartDashboard.putNumber("Distance Driven", Robot.driveTrain.getInchesFromPulses(x));
        	

@@ -74,18 +74,18 @@ public class Robot extends TimedRobot {
 		camera.setFPS(15);
 		
 		startPlace.setName("Start Place");
+		startPlace.addDefault("right", "right");
 		startPlace.addObject("left", "left");
-		startPlace.addObject("right", "right");
 		startPlace.addObject("center", "center");
 		
 		plate.setName("Plate Selection");
-		plate.addDefault("none", "none");
-		plate.addObject("switch", "switch");
-		plate.addObject("scale", "scale");
+		plate.addDefault("scale", "scale");
+		plate.addObject("none", "none");
+		plate.addObject("switch", "switch");	
 		
 		crossCenter.setName("Cross?");
-		crossCenter.addDefault("No", true);
-		crossCenter.addObject("Yes", false);
+		crossCenter.addDefault("No", false);
+		crossCenter.addObject("Yes", true);
 		
 		SmartDashboard.putData(startPlace.getName(), startPlace);
 		SmartDashboard.putData(plate.getName(), plate);
