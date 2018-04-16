@@ -66,9 +66,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		catch(RuntimeException ex){
 			DriverStation.reportError("Error ins\tantiating navX-MXP: "+ ex.getMessage(), true);
 		}
-		while (navx == null){
-			System.out.println("Navx still null");
-		}
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
 		turnController.setOutputRange(-.5, .5);
@@ -167,26 +164,26 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * Adds values to the shuffleboard.
 	 */
 	public void writeToSmartDashboard(){
-		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
+//		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
 		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
 
 		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
 		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
 
-		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
+//		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
+//		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
 
 		SmartDashboard.putNumber("Driving Straight Cycle Count", drivingStraightCycleCount);
 		SmartDashboard.putNumber("steering", deadbanded(Robot.oi.getDriverJoystick().getRawAxis(0), joystickDeadband));
 
-		if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
-			maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
-		}
-		if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
-			maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
-		}
+//		if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
+//			maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
+//		}
+//		if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
+//			maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
+//		}
 		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
 		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
 

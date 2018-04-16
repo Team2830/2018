@@ -1,6 +1,9 @@
 package org.usfirst.frc.team2830.robot.commands;
 
 import org.usfirst.frc.team2830.robot.Robot;
+import org.usfirst.frc.team2830.robot.RobotMap;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -75,10 +78,11 @@ public class DriveDistance extends Command {
        	double xBrake = m_distance-Math.min(rampDown,m_distance/2);
        	if (Math.abs(x)>Math.abs(xBrake)){
 //       		v=(vMin-m_speed)/(m_distance-xBrake)*(2*(x-m_distance));
-       		v= m_speed-((m_speed-vMin)/(m_distance-xBrake))*(x-xBrake);
+       		v= (m_speed-((m_speed-vMin)/(m_distance-xBrake))*(x-xBrake));
+       		//v = v*v;
        	}
        	else if (Math.abs(x)<Math.abs(xRamp))
-       		v=vMin+((m_speed-vMin)/xRamp)*x;
+       		v=vMin+((m_speed-vMin)/xRamp)*(x);
        	else
       		v=m_speed;
        	if(m_distance <= 15){
@@ -118,7 +122,14 @@ public class DriveDistance extends Command {
 		if (m_distance <= Robot.driveTrain.getDistance()) {
 			Robot.driveTrain.driveStraight(0);
 			Timer.delay(delay);
-			Robot.driveTrain.resetCounters();
+			//Robot.driveTrain.resetCounters();
+			int checkLoop = 0;
+			while (++checkLoop<100){
+				Robot.driveTrain.driveStraight(-1);
+				//RobotMap.talonLeft.set(ControlMode.PercentOutput,-1);
+				//RobotMap.talonRight.set(ControlMode.PercentOutput, -1);
+				//Timer.delay(.001);
+			}
 			return true;
 		}
 		return false;
@@ -127,6 +138,7 @@ public class DriveDistance extends Command {
 	// Called once after isFinished returns true
 	protected void end() {
 		Robot.driveTrain.driveStraight(0);
+		
 	}
 
 	// Called when another command which requires one or more of the same
