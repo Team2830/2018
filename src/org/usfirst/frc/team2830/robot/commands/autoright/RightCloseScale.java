@@ -35,9 +35,8 @@ public class RightCloseScale extends CommandGroup {
     	addParallel(new MoveLiftToSetPoint(1000));
     	addSequential(new DriveDistance(12*18));
     	addSequential(new Turn(-45));
-    	addSequential(new DriveDistance(2));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.tallScaleHeight));
-    	addSequential(new DriveDistance(6));
+    	addSequential(new DriveDistance(15));
     	addSequential(new IntakeOut());
     	addSequential(new DriveBackwards(12*2));
     	addSequential(new MoveLiftToSetPoint(750));

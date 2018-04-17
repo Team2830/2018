@@ -35,18 +35,19 @@ public class CenterRightSwitch extends CommandGroup {
         // arm.
     	
     	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
-    	addSequential(new DriveDistance(15));
+    	addSequential(new DriveDistance(14));
     	addSequential(new Turn(45));
     	addSequential(new DriveDistance(4*12));
     	addSequential(new Turn(-53));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-    	addSequential(new DriveDistance(12));
+    	addSequential(new DriveDistance(15));
     	addSequential(new IntakeOut());
     	addSequential(new DriveBackwards(12*3.5));
     	addSequential(new MoveLiftToSetPoint(0));
     	
-    	addSequential(new Turn(-45));
-    	addParallel(new DriveDistance(50));
+    	addSequential(new Turn(-48));
+    	addParallel(new DriveDistance(37));
+    	addSequential(new IntakeInLeft());
     	addSequential(new IntakeInLeft());
     	addSequential(new DriveBackwards(24));
     }

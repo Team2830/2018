@@ -188,7 +188,8 @@ public class Robot extends TimedRobot {
 				selectedAuto = new DriveForwardAuto();
 			}
 		}
-		m_autonomousCommand = selectedAuto;
+		//m_autonomousCommand = selectedAuto;
+		m_autonomousCommand = new DriveForwardAuto();
 		SmartDashboard.putString("Chosen Auto", selectedAuto.getName());
 		Robot.driveTrain.resetCounters();
 		Robot.lift.enable();

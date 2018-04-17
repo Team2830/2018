@@ -11,6 +11,7 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,10 +48,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 //	static final double kP = 0.06;
 //	static final double kI = 0.0055;
 	
-	static final double kP = 0.01;
-	static final double kI = 0.000;
-	static final double kD = 0.0002;
-	static final double kF = 0.00;
+	static final double kP = 0.025;//1;
+	static final double kI = 0.000000000;//1;
+	static final double kD = 0.09;//9;//2;
+	static final double kF = 0.0;
 
 	/* This tuning parameter indicates how close to "on target" the    */
 	/* PID Controller will attempt to get.                             */
@@ -66,9 +67,12 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		catch(RuntimeException ex){
 			DriverStation.reportError("Error ins\tantiating navX-MXP: "+ ex.getMessage(), true);
 		}
+		while (navx == null){
+			System.out.println("Navx still null");
+		}
 		turnController = new PIDController(kP, kI, kD, kF, navx, this); 
 		turnController.setInputRange(-180.0f,  180.0f);
-		turnController.setOutputRange(-.5, .5);
+		turnController.setOutputRange(-1, 1);
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
 		//turnController.disable();
@@ -117,9 +121,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 			
-			if (Math.abs(throttle) > .8){
-				throttle = Math.copySign(.8, throttle);
-			}
+//			if (Math.abs(throttle) > .8){
+//				throttle = Math.copySign(.8, throttle);
+//			}
 			
 			SmartDashboard.putNumber("Steering", steering);
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
@@ -164,26 +168,26 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * Adds values to the shuffleboard.
 	 */
 	public void writeToSmartDashboard(){
-//		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
-//		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Left Encoder Distance", RobotMap.talonLeft.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Left Encoder Speed", RobotMap.talonLeft.getSelectedSensorVelocity(0));
 		RobotMap.talonLeft.setName("DriveTrain", "Left Talon");
 
 		SmartDashboard.putNumber("Left Controller Input", RobotMap.talonLeft.get());
 		SmartDashboard.putNumber("Right Controller Input", RobotMap.talonRight.get());
 
-//		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
-//		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
-//		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
+		SmartDashboard.putNumber("Right Encoder Distance", RobotMap.talonRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder Speed", RobotMap.talonRight.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Error", RobotMap.talonLeft.getClosedLoopError(0));
 
 		SmartDashboard.putNumber("Driving Straight Cycle Count", drivingStraightCycleCount);
 		SmartDashboard.putNumber("steering", deadbanded(Robot.oi.getDriverJoystick().getRawAxis(0), joystickDeadband));
 
-//		if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
-//			maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
-//		}
-//		if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
-//			maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
-//		}
+		if(RobotMap.talonLeft.getSelectedSensorVelocity(0)>maxOutputLeft){
+			maxOutputLeft = RobotMap.talonLeft.getSelectedSensorVelocity(0);
+		}
+		if(RobotMap.talonRight.getSelectedSensorVelocity(0)>maxOutputRight){
+			maxOutputRight = RobotMap.talonRight.getSelectedSensorVelocity(0);
+		}
 		SmartDashboard.putNumber("MaxVelocityLeft", maxOutputLeft);
 		SmartDashboard.putNumber("MaxVelocityRight", maxOutputRight);
 
@@ -280,9 +284,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		 */
 		if (!onTarget()){
 			
-			if (Math.abs(output) < .33){
-				RobotMap.talonLeft.set(Math.copySign(.33, output));
-				RobotMap.talonRight.set(Math.copySign(.33, -output));
+			if (Math.abs(output) < .27){
+				RobotMap.talonLeft.set(Math.copySign(.27, output));
+				RobotMap.talonRight.set(Math.copySign(.27, -output));
 			} else {
 				RobotMap.talonLeft.set(output);
 				RobotMap.talonRight.set(-output);
@@ -302,5 +306,16 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public boolean collided(){
 		return true;
 		//if(navx.getWorldLinearAccelX() < -)
+	}
+	public void driveMotionMagic(int distance){
+		RobotMap.talonLeft.set(ControlMode.MotionMagic, distance);
+		RobotMap.talonRight.set(ControlMode.MotionMagic, distance);
+	}
+	public boolean driveOnTarget(){
+		if(RobotMap.talonLeft.getClosedLoopTarget(0)-RobotMap.talonLeft.getSelectedSensorPosition(0)< 100){
+			if(RobotMap.talonRight.getClosedLoopTarget(0)-RobotMap.talonLeft.getSelectedSensorPosition(0)<100){
+				return true;
+			}
+		}return false;
 	}
 }

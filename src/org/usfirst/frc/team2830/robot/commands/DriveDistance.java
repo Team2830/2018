@@ -44,7 +44,7 @@ public class DriveDistance extends Command {
 	}
 
 	public DriveDistance(double distance) {
-		this(distance, 0.7, 0);
+		this(distance, .7, 0);
 	}
 
 	// Called just before this Command runs the first time
@@ -124,12 +124,12 @@ public class DriveDistance extends Command {
 			Timer.delay(delay);
 			//Robot.driveTrain.resetCounters();
 			int checkLoop = 0;
-			while (++checkLoop<100){
-				Robot.driveTrain.driveStraight(-1);
+			//while (++checkLoop<100){
+			//	Robot.driveTrain.driveStraight(-1);
 				//RobotMap.talonLeft.set(ControlMode.PercentOutput,-1);
 				//RobotMap.talonRight.set(ControlMode.PercentOutput, -1);
 				//Timer.delay(.001);
-			}
+			//}
 			return true;
 		}
 		return false;

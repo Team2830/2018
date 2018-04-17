@@ -85,13 +85,15 @@ public class Turn extends Command {
 	protected void end() {
 		SmartDashboard.putBoolean("Turn Finished", true);
 		Robot.driveTrain.disablePID();
-		Robot.driveTrain.driveStraight(0);
+		//Robot.driveTrain.driveStraight(0);
+		Timer.delay(.1);
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	protected void interrupted() {
 		Robot.driveTrain.driveStraight(0);
+		Robot.driveTrain.disablePID();
 	}
 }
 
