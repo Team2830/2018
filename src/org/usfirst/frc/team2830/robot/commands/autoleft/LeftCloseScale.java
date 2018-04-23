@@ -5,6 +5,7 @@ import org.usfirst.frc.team2830.robot.commands.DriveDistance;
 import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.Turn;
+import org.usfirst.frc.team2830.robot.commands.TurnToAngle;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -30,9 +31,16 @@ public class LeftCloseScale extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addParallel(new MoveLiftToSetPoint(1000));
-    	addSequential(new DriveDistance(12*17.5));
-    	addSequential(new Turn(45));
+    	
+    	//moves lift up and drives to null territory
+    	addSequential(new CommandGroup(){
+    		{
+    	    	addParallel(new MoveLiftToSetPoint(1000));
+    	    	addSequential(new DriveDistance(12*17.5));//, .7, .2));
+    		}
+    	});
+
+    	addSequential(new TurnToAngle(-45));
     	addSequential(new MoveLiftToSetPoint(Robot.lift.tallScaleHeight));
     	addSequential(new DriveDistance(15));
     	addSequential(new IntakeOut());

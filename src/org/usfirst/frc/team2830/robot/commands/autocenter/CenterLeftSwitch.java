@@ -7,6 +7,7 @@ import org.usfirst.frc.team2830.robot.commands.IntakeInRight;
 import org.usfirst.frc.team2830.robot.commands.IntakeOut;
 import org.usfirst.frc.team2830.robot.commands.MoveLiftToSetPoint;
 import org.usfirst.frc.team2830.robot.commands.Turn;
+import org.usfirst.frc.team2830.robot.commands.TurnToAngle;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -33,20 +34,58 @@ public class CenterLeftSwitch extends CommandGroup {
         // a CommandGroup containing them would require both the chassis and the
         // arm.
     	
-    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
-    	addSequential(new DriveDistance(15));
+    	
+    	//drive forward and lift
+    	addSequential(new CommandGroup(){
+    		{
+    	    	addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/2));
+    	    	addSequential(new DriveDistance(14));
+    		}
+    	});
+    	
     	addSequential(new Turn(-50));
     	addSequential(new DriveDistance(4.8*12));
     	addSequential(new Turn(47));
-    	addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
-    	addSequential(new DriveDistance(12));
+    	//lift to switch height, drives to switch wall
+    	addSequential(new CommandGroup(){
+    		{
+    			addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight));
+    			addSequential(new DriveDistance(12));
+    		}
+    	});
     	addSequential(new IntakeOut());
-    	addSequential(new DriveBackwards(12*3.5));
-    	addSequential(new MoveLiftToSetPoint(0));
+    	//drives backwards, brings lift down
+    	addSequential(new CommandGroup(){
+    		{
+    			addParallel(new DriveBackwards(12*3.5));
+    			addSequential(new MoveLiftToSetPoint(0));
+    		}
+    	});
     	
     	addSequential(new Turn(45));
-    	addSequential(new DriveDistance(50));
-    	addSequential(new IntakeInRight());
-    	addSequential(new DriveBackwards(24));
+    	//drives to powercube pile, picks up second cube
+    	addSequential(new CommandGroup(){
+    		{
+    			addParallel(new DriveDistance(50));
+    			addSequential(new IntakeInRight());
+    		}
+    	});
+    	//lifts lift a bit as robot drives in reverse
+    	addSequential(new CommandGroup(){
+    		{
+    			addParallel(new MoveLiftToSetPoint(Robot.lift.switchHeight/4));
+    			addSequential(new DriveBackwards(24));
+    		}
+    	});
+    	addSequential(new TurnToAngle(0));
+    	
+    	//lifts lift to switch height, drives to switch wall
+    	addSequential(new CommandGroup(){
+    		{
+    			addParallel(new DriveDistance(40));
+    			addSequential(new MoveLiftToSetPoint(Robot.lift.switchHeight));
+    		}
+    	});
+    	addSequential(new IntakeOut());
     }
 }

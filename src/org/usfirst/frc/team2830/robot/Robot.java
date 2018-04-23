@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.WaitForChildren;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
 		camera = CameraServer.getInstance().startAutomaticCapture();
 		// Set the resolution
 		camera.setResolution(320, 240);
-		camera.setFPS(15);
+		camera.setFPS(30);
 		
 		startPlace.setName("Start Place");
 		startPlace.addDefault("right", "right");
@@ -188,10 +189,11 @@ public class Robot extends TimedRobot {
 				selectedAuto = new DriveForwardAuto();
 			}
 		}
-		//m_autonomousCommand = selectedAuto;
-		m_autonomousCommand = new DriveForwardAuto();
+		m_autonomousCommand = selectedAuto;
+		//m_autonomousCommand = new CenterRightSwitch();
 		SmartDashboard.putString("Chosen Auto", selectedAuto.getName());
 		Robot.driveTrain.resetCounters();
+		driveTrain.resetGyro();
 		Robot.lift.enable();
 
 		/*

@@ -44,13 +44,15 @@ public class DriveDistance extends Command {
 	}
 
 	public DriveDistance(double distance) {
-		this(distance, .7, 0);
+		this(distance, .85, 0);
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
 		Robot.driveTrain.resetCounters();
 		Robot.driveTrain.setOpenloopRamp(0);
+		Robot.driveTrain.setBearing();
+		SmartDashboard.putString("Current Command", "Drive Forward");
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -71,21 +73,21 @@ public class DriveDistance extends Command {
     	}*/
         double v;
        	double x = Robot.driveTrain.getDistance();
-       	double rampDown = Robot.driveTrain.getPulsesFromInches(Math.copySign(70, m_distance));
+       	double rampDown = Robot.driveTrain.getPulsesFromInches(Math.copySign(40, m_distance));
        	double rampUp = Robot.driveTrain.getPulsesFromInches(Math.copySign(18, m_distance));
        	double vMin = Math.copySign(.2, m_distance);
        	double xRamp = Math.min(rampUp,m_distance/2);
        	double xBrake = m_distance-Math.min(rampDown,m_distance/2);
        	if (Math.abs(x)>Math.abs(xBrake)){
 //       		v=(vMin-m_speed)/(m_distance-xBrake)*(2*(x-m_distance));
-       		v= (m_speed-((m_speed-vMin)/(m_distance-xBrake))*(x-xBrake));
+       		v= (m_speed-((m_speed)/(m_distance-xBrake))*(x-xBrake));
        		//v = v*v;
        	}
        	else if (Math.abs(x)<Math.abs(xRamp))
        		v=vMin+((m_speed-vMin)/xRamp)*(x);
        	else
       		v=m_speed;
-       	if(m_distance <= 15){
+       	if(m_distance <= 25){
        		v = .5;
        	}
        	SmartDashboard.putNumber("Ramp Velocity", v);

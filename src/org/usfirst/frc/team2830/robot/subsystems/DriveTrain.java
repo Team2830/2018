@@ -35,6 +35,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
 	int drivingStraightCycleCount = 0;
+	
+	double bearing = 0;
+	
 
 	PIDController turnController;
 	double rotateToAngleRate;
@@ -48,9 +51,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 //	static final double kP = 0.06;
 //	static final double kI = 0.0055;
 	
-	static final double kP = 0.025;//1;
-	static final double kI = 0.000000000;//1;
-	static final double kD = 0.09;//9;//2;
+	static final double kP = 0.027;//1;
+	static final double kI = 0.000025;//1;
+	static final double kD = 0.085;//9;//2;
 	static final double kF = 0.0;
 
 	/* This tuning parameter indicates how close to "on target" the    */
@@ -76,6 +79,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
 		//turnController.disable();
+		
+		navx.zeroYaw();
 	}
 
 	public void initDefaultCommand() {
@@ -90,9 +95,13 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public void resetCounters() {
 		//RobotMap.leftEncoder.reset();
 		//RobotMap.rightEncoder.reset();
-		navx.zeroYaw();
+		//navx.zeroYaw();
 		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
+	}
+	
+	public void resetGyro(){
+		navx.zeroYaw();
 	}
 
 	/**
@@ -114,16 +123,18 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		/**
 		 * TODO try to dampen joystick input
 		 */
+		
 		if(turnController.isEnabled() && this.onTarget()){
 			this.disablePID();
+			
 		}
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
 			double steering = 0.6*deadbanded(driverStick.getRawAxis(0), joystickDeadband);
 			
-//			if (Math.abs(throttle) > .8){
-//				throttle = Math.copySign(.8, throttle);
-//			}
+			if (Math.abs(throttle) > .8){
+				throttle = Math.copySign(.8, throttle);
+			}
 			
 			SmartDashboard.putNumber("Steering", steering);
 			double maxInput = Math.copySign(Math.max(Math.abs(throttle), Math.abs(steering)), throttle);
@@ -194,6 +205,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("Gyro Angle", navx.getAngle());
 		//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
 	}
+	public void setBearing(){
+		bearing = getAngle();
+	}
 
 	/**
 	 * Checks the gyro against setAngle.
@@ -213,10 +227,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		}
 		if(!turnController.isEnabled()){
 			if(throttle > 0){
-				if (navx.getAngle() > 1){
+				if (navx.getAngle()-bearing > 1){
 					RobotMap.talonLeft.set(throttle*.60);
 					RobotMap.talonRight.set(throttle);
-				}else if(navx.getAngle()< -1){
+				}else if(navx.getAngle()-bearing< -1){
 					RobotMap.talonLeft.set(throttle);
 					RobotMap.talonRight.set(throttle*.60);
 				}else{
@@ -225,10 +239,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 				}
 			}
 			else{
-				if (navx.getAngle() > 1){
+				if (navx.getAngle()-bearing > 1){
 					RobotMap.talonLeft.set(throttle);
 					RobotMap.talonRight.set(throttle*.60);
-				}else if(navx.getAngle()< -1){
+				}else if(navx.getAngle()-bearing< -1){
 					RobotMap.talonLeft.set(throttle*.60);
 					RobotMap.talonRight.set(throttle);
 				}else{
@@ -236,6 +250,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 					RobotMap.talonRight.set(throttle);
 				}
 			}
+		}else{
+			System.out.println("Turn PID still enabled while drive straight running");
 		}
 	}
 

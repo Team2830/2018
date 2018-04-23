@@ -39,13 +39,14 @@ public class DriveBackwards extends Command {
 	}
 
 	public DriveBackwards(double distance) {
-		this(distance, 0.4, 0);
+		this(distance, 0.7, 0);
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
 		Robot.driveTrain.resetCounters();
 		Robot.driveTrain.setOpenloopRamp(0);
+		Robot.driveTrain.setBearing();
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -54,7 +55,26 @@ public class DriveBackwards extends Command {
     		Robot.driveTrain.resetCounters();
     		isFirstRun = false;
     	}
-    	Robot.driveTrain.driveStraight(-m_speed);
+    	double v;
+       	double x = Robot.driveTrain.getDistance();
+       	double rampDown = Robot.driveTrain.getPulsesFromInches(-40);
+       	double rampUp = Robot.driveTrain.getPulsesFromInches(-18);
+       	double vMin = .2;
+       	double xRamp = Math.min(rampUp,-m_distance/2);
+       	double xBrake = -m_distance-Math.min(rampDown,-m_distance/2);
+       	if (Math.abs(x)>Math.abs(xBrake)){
+//       		v=(vMin-m_speed)/(m_distance-xBrake)*(2*(x-m_distance));
+       		v= (m_speed-((m_speed)/(m_distance-xBrake))*(x-xBrake));
+       		//v = v*v;
+       	}
+       	else if (Math.abs(x)<Math.abs(xRamp))
+       		v=vMin+((m_speed-vMin)/xRamp)*(x);
+       	else
+      		v=m_speed;
+       	if(m_distance <= 15){
+       		v = .5;
+       	}
+    	Robot.driveTrain.driveStraight(-v);
        	
     }
 
