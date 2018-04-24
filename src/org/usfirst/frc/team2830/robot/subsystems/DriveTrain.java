@@ -207,12 +207,13 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	 * @param throttle The default driving speed
 	 */
 	public void driveStraight(double throttle){
+		/**TODO remove the check for turncontroller and just force the disablePID. **/
 		if(turnController.isEnabled() && this.onTarget()){
 			this.disablePID();
 		}
-		if(!turnController.isEnabled()){
+		if(!turnController.isEnabled()){ /**TODO remove this loop. just run it...*/
 			if(throttle > 0){
-				if (navx.getAngle() > 1){
+				if (navx.getAngle() > 1){ 
 					RobotMap.talonLeft.set(throttle*.60);
 					RobotMap.talonRight.set(throttle);
 				}else if(navx.getAngle()< -1){
