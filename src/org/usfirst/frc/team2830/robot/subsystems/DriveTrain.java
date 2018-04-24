@@ -11,7 +11,6 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.RobotMap;
 import org.usfirst.frc.team2830.robot.commands.ArcadeDrive;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -35,9 +34,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	double maxOutputLeft = 0.0;
 	double maxOutputRight = 0.0;
 	int drivingStraightCycleCount = 0;
-	
-	double bearing = 0;
-	
 
 	PIDController turnController;
 	double rotateToAngleRate;
@@ -79,8 +75,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		turnController.setAbsoluteTolerance(kToleranceDegrees);
 		turnController.setContinuous(true);
 		//turnController.disable();
-		
-		navx.zeroYaw();
 	}
 
 	public void initDefaultCommand() {
@@ -95,13 +89,9 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public void resetCounters() {
 		//RobotMap.leftEncoder.reset();
 		//RobotMap.rightEncoder.reset();
-		//navx.zeroYaw();
+		navx.zeroYaw();
 		RobotMap.talonLeft.setSelectedSensorPosition(0, 0, 10);
 		RobotMap.talonRight.setSelectedSensorPosition(0, 0, 10);
-	}
-	
-	public void resetGyro(){
-		navx.zeroYaw();
 	}
 
 	/**
@@ -123,10 +113,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		/**
 		 * TODO try to dampen joystick input
 		 */
-		
 		if(turnController.isEnabled() && this.onTarget()){
 			this.disablePID();
-			
 		}
 		if(! turnController.isEnabled()){
 			double throttle = deadbanded((-1*driverStick.getRawAxis(2))+driverStick.getRawAxis(3), joystickDeadband);
@@ -205,9 +193,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		SmartDashboard.putNumber("Gyro Angle", navx.getAngle());
 		//	SmartDashboard.putBoolean("CurrentLimit", RobotMap.talonLeft.)
 	}
-	public void setBearing(){
-		bearing = getAngle();
-	}
 
 	/**
 	 * Checks the gyro against setAngle.
@@ -227,10 +212,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		}
 		if(!turnController.isEnabled()){
 			if(throttle > 0){
-				if (navx.getAngle()-bearing > 1){
+				if (navx.getAngle() > 1){
 					RobotMap.talonLeft.set(throttle*.60);
 					RobotMap.talonRight.set(throttle);
-				}else if(navx.getAngle()-bearing< -1){
+				}else if(navx.getAngle()< -1){
 					RobotMap.talonLeft.set(throttle);
 					RobotMap.talonRight.set(throttle*.60);
 				}else{
@@ -239,10 +224,10 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 				}
 			}
 			else{
-				if (navx.getAngle()-bearing > 1){
+				if (navx.getAngle() > 1){
 					RobotMap.talonLeft.set(throttle);
 					RobotMap.talonRight.set(throttle*.60);
-				}else if(navx.getAngle()-bearing< -1){
+				}else if(navx.getAngle()< -1){
 					RobotMap.talonLeft.set(throttle*.60);
 					RobotMap.talonRight.set(throttle);
 				}else{
@@ -250,8 +235,6 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 					RobotMap.talonRight.set(throttle);
 				}
 			}
-		}else{
-			System.out.println("Turn PID still enabled while drive straight running");
 		}
 	}
 
@@ -322,16 +305,5 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	public boolean collided(){
 		return true;
 		//if(navx.getWorldLinearAccelX() < -)
-	}
-	public void driveMotionMagic(int distance){
-		RobotMap.talonLeft.set(ControlMode.MotionMagic, distance);
-		RobotMap.talonRight.set(ControlMode.MotionMagic, distance);
-	}
-	public boolean driveOnTarget(){
-		if(RobotMap.talonLeft.getClosedLoopTarget(0)-RobotMap.talonLeft.getSelectedSensorPosition(0)< 100){
-			if(RobotMap.talonRight.getClosedLoopTarget(0)-RobotMap.talonLeft.getSelectedSensorPosition(0)<100){
-				return true;
-			}
-		}return false;
 	}
 }
