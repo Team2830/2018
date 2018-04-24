@@ -1,11 +1,11 @@
 package org.usfirst.frc.team2830.robot.commands;
 
-import org.usfirst.frc.team2830.robot.Robot;
+import org.usfirst.frc.team2830.robot.Robot; 
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+ 
 /**
  * @param m_distance
  *            is the goal distance of the robot

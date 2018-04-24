@@ -76,6 +76,7 @@ public class Turn extends Command {
 				+Math.abs(RobotMap.talonRight.getSelectedSensorVelocity(0))<50){
 			if (Robot.driveTrain.onTarget()){
 				Timer.delay(.1);
+				/** TODO disable PID here **/
 				return true;
 			}
 		}
@@ -95,6 +96,7 @@ public class Turn extends Command {
 	// subsystems is scheduled to run
 	protected void interrupted() {
 		Robot.driveTrain.driveStraight(0);
+		/** TODO disablePID here **/
 	}
 }
 
